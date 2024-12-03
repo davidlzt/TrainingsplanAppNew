@@ -1,0 +1,61 @@
+package restcontroller;
+
+import models.Trainingsplan;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import repository.TrainingsplanRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/Trainingsplan")
+public class TrainingsplaeneController {
+
+    @Autowired
+    private TrainingsplanRepository trainingsplanRepository;
+
+    @GetMapping
+    public List<Trainingsplan> getAllTrainingsplaene() {
+        return trainingsplanRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Trainingsplan> getTrainingsplanById(@PathVariable Long id) {
+        Optional<Trainingsplan> trainingsplan = trainingsplanRepository.findById(id);
+        if (trainingsplan.isPresent()) {
+            return new ResponseEntity<>(trainingsplan.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<Trainingsplan> createTrainingsplan(@RequestBody Trainingsplan trainingsplan) {
+        Trainingsplan savedTrainingsplan = trainingsplanRepository.save(trainingsplan);
+        return new ResponseEntity<>(savedTrainingsplan, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Trainingsplan> updateTrainingsplan(@PathVariable Long id, @RequestBody Trainingsplan trainingsplan) {
+        if (trainingsplanRepository.existsById(id)) {
+            trainingsplan.setId(id);
+            Trainingsplan updatedTrainingsplan = trainingsplanRepository.save(trainingsplan);
+            return new ResponseEntity<>(updatedTrainingsplan, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTrainingsplan(@PathVariable Long id) {
+        if (trainingsplanRepository.existsById(id)) {
+            trainingsplanRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}
