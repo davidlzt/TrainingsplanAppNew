@@ -1,4 +1,4 @@
-package models;
+package valueobjects;
 
 public enum Role {
     ADMIN("admin"),

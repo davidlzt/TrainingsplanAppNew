@@ -1,9 +1,9 @@
 package databasehandler;
 
 import databaseconnection.DatabaseConnection;
-import models.Device;
-import models.Exercise;
-import models.Muscle;
+import entitys.Device;
+import entitys.Exercise;
+import valueobjects.Muscle;
 
 import java.sql.*;
 import java.util.List;
@@ -38,7 +38,7 @@ public class ExerciseHandler {
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             for (Muscle muscle : muscles) {
-                pstmt.setInt(1, exerciseId);
+                pstmt.setLong(1, exerciseId);
                 pstmt.setString(2, muscle.getName());  // Name des Muskels
                 pstmt.setString(3, muscle.getDescription());  // Beschreibung des Muskels
                 pstmt.executeUpdate();
@@ -53,8 +53,8 @@ public class ExerciseHandler {
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             for (Device device : devices) {
-                pstmt.setInt(1, exerciseId);
-                pstmt.setInt(2, device.getId());
+                pstmt.setLong(1, exerciseId);
+                pstmt.setLong(2, device.getId());
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {

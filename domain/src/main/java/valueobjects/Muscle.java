@@ -1,7 +1,6 @@
-package models;
+package valueobjects;
 
 public enum Muscle {
-
     BIZEPS("Bizeps", "Der Bizeps ist der Hauptmuskel im Oberarm, der bei Armbeugen aktiviert wird."),
 
     TRIZEPS("Trizeps", "Der Trizeps ist der Gegenspieler des Bizeps und für die Streckung des Arms verantwortlich."),

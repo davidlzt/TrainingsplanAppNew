@@ -1,7 +1,10 @@
 package databasehandler;
 
 import databaseconnection.DatabaseConnection;
-import models.User;
+import entitys.User;
+import valueobjects.Email;
+import valueobjects.Weight;
+import valueobjects.Height;
 
 import java.sql.*;
 import java.util.List;
@@ -17,7 +20,7 @@ public class UserHandler {
 
         String sql = "INSERT INTO users (username, email, password, gewicht, age, groesse, geschlecht, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DatabaseConnection.connect();  // Verwende die Methode aus der DatabaseConnection-Klasse
+        try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
             pstmt.setString(2, email);
@@ -42,7 +45,7 @@ public class UserHandler {
     public boolean validateUser(String username, String password) {
         String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
 
-        try (Connection conn = DatabaseConnection.connect();  // Verwende die Methode aus der DatabaseConnection-Klasse
+        try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
             pstmt.setString(2, password);
@@ -59,7 +62,7 @@ public class UserHandler {
     public boolean isAdmin(String username) {
         String sql = "SELECT role FROM users WHERE username = ?";
 
-        try (Connection conn = DatabaseConnection.connect();  // Verwende die Methode aus der DatabaseConnection-Klasse
+        try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -87,7 +90,7 @@ public class UserHandler {
 
         String sql = "UPDATE users SET role = ? WHERE id = ?";
 
-        try (Connection conn = DatabaseConnection.connect();  // Verwende die Methode aus der DatabaseConnection-Klasse
+        try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, newRole);
             pstmt.setInt(2, userId);
@@ -102,12 +105,29 @@ public class UserHandler {
         String sql = "SELECT * FROM users ORDER BY role";
         List<User> users = new ArrayList<>();
 
-        try (Connection conn = DatabaseConnection.connect();  // Verwende die Methode aus der DatabaseConnection-Klasse
+        try (Connection conn = DatabaseConnection.connect();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                User user = new User(rs.getLong("id"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getDouble("gewicht"), rs.getInt("age"), rs.getInt("groesse"), rs.getString("geschlecht"), rs.getString("role"));
+                Long id = rs.getLong("id");
+                String username = rs.getString("username");
+                String emailString = rs.getString("email");
+                String password = rs.getString("password");
+                double gewichtValue = rs.getDouble("gewicht");
+                int age = rs.getInt("age");
+                double groesseValue = rs.getDouble("groesse");
+                String geschlecht = rs.getString("geschlecht");
+                String role = rs.getString("role");
+
+                // Erstelle die Value Objects
+                Email email = new Email(emailString);
+                Weight weight = new Weight(gewichtValue);
+                Height height = new Height(groesseValue);
+
+                // Erstelle den User und füge ihn der Liste hinzu
+                User user = new User(id, username, email, password, weight, age, height, geschlecht, role);
+                user.setId(id);
                 users.add(user);
             }
 

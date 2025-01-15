@@ -1,9 +1,11 @@
-package models;
+package entitys;
+
+import valueobjects.Muscle;
 
 import java.util.List;
 
 public class Exercise {
-
+    private Long id;
     private String name;
     private String difficulty;
     private String image;
@@ -18,6 +20,14 @@ public class Exercise {
         this.targetMuscles = targetMuscles;
         this.description = description;
         this.devices = devices;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
