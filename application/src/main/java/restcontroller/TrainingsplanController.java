@@ -1,30 +1,30 @@
 package restcontroller;
 
-import models.Trainingsplan;
+import entitys.Trainingsplan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import repository.TrainingsplanRepository;
+import repositories.TrainingsplanRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/Trainingsplan")
-public class TrainingsplaeneController {
+public class TrainingsplanController {
 
     @Autowired
     private TrainingsplanRepository trainingsplanRepository;
 
     @GetMapping
     public List<Trainingsplan> getAllTrainingsplaene() {
-        return trainingsplanRepository.findAll();
+        return trainingsplanRepository.getAllTrainingsplaene();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Trainingsplan> getTrainingsplanById(@PathVariable Long id) {
-        Optional<Trainingsplan> trainingsplan = trainingsplanRepository.findById(id);
+        Optional<Trainingsplan> trainingsplan = Optional.ofNullable(trainingsplanRepository.getTrainingsplanById(id));
         if (trainingsplan.isPresent()) {
             return new ResponseEntity<>(trainingsplan.get(), HttpStatus.OK);
         } else {
@@ -40,8 +40,7 @@ public class TrainingsplaeneController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Trainingsplan> updateTrainingsplan(@PathVariable Long id, @RequestBody Trainingsplan trainingsplan) {
-        if (trainingsplanRepository.existsById(id)) {
-            trainingsplan.setId(id);
+        if (trainingsplanRepository.getTrainingsplanById(id) != null) {
             Trainingsplan updatedTrainingsplan = trainingsplanRepository.save(trainingsplan);
             return new ResponseEntity<>(updatedTrainingsplan, HttpStatus.OK);
         } else {
@@ -51,8 +50,8 @@ public class TrainingsplaeneController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTrainingsplan(@PathVariable Long id) {
-        if (trainingsplanRepository.existsById(id)) {
-            trainingsplanRepository.deleteById(id);
+        if (trainingsplanRepository.getTrainingsplanById(id) != null) {
+            trainingsplanRepository.deleteTrainingsplan(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

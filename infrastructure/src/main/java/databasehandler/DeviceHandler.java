@@ -1,7 +1,7 @@
 package databasehandler;
 
 import databaseconnection.DatabaseConnection;
-import models.Device;
+import entitys.Device;
 
 import java.sql.*;
 

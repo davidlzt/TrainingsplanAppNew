@@ -19,10 +19,10 @@ public class DatabaseSetup {
                 + "username VARCHAR(255), "
                 + "email VARCHAR(255), "
                 + "password VARCHAR(255), "
-                + "gewicht DOUBLE, "
+                + "weight DOUBLE, "
                 + "age INT, "
-                + "groesse DOUBLE, "
-                + "geschlecht VARCHAR(10), "
+                + "height DOUBLE, "
+                + "sex VARCHAR(10), "
                 + "role VARCHAR(32))";
 
         try (Connection conn = DatabaseConnection.connect();
