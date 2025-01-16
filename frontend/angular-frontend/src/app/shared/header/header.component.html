@@ -1,0 +1,20 @@
+<header>
+  <div class="upper-container">
+    <div class="logo">
+      <a routerLink="/" (click)="navigateHome()">TWD - Train with David</a>
+    </div>
+    <div class="searchbar">
+      <input type="text" placeholder="Suche..." />
+    </div>
+    <div class="user-actions">
+      <button (click)="showAdmin()">Admin</button>
+      <button (click)="showAccount()">Mein Konto</button>
+    </div>
+  </div>
+  <div class="bottom-container">
+    <a routerLink="" (click)="navigateHome()">Home</a>
+    <a routerLink="configurator" (click)="navigateConfigurator()">Schlauch-Konfigurator</a>
+    <a routerLink="support" (click)="navigateSupport()">Support</a>
+  </div>
+  <hr>
+</header>
