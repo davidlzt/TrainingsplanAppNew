@@ -1,0 +1,52 @@
+/* Dashboard Styles */
+.dashboard-container {
+  padding: 20px;
+  background-color: #121212;
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  text-align: center;
+  color: #00bcd4;
+  margin-bottom: 20px;
+}
+
+.calendar-box {
+  background-color: #1f1f1f;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.training-item {
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+.training-item:last-child {
+  border-bottom: none;
+}
+
+.training-date {
+  font-weight: bold;
+  color: #bbb;
+}
+
+.training-details {
+  color: #999;
+}
+
+.menu-button {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.menu-button .btn {
+  background-color: #444;
+  color: white;
+  width: 150px;
+}
+
+.menu-button .btn:hover {
+  background-color: #555;
+}
