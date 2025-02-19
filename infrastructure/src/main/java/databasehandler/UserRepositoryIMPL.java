@@ -79,13 +79,28 @@ public class UserRepositoryIMPL implements UserRepository {
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // Umwandlung des Role-Enums in einen String
             pstmt.setString(1, newRole.getRolename());
             pstmt.setLong(2, userId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Fehler beim Aktualisieren der Benutzerrolle: " + e.getMessage());
         }
+    }
+
+    @Override
+    public Long findMaxId() {
+        String sql = "SELECT MAX(id) FROM users";
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            System.out.println("Fehler beim Abrufen der maximalen ID: " + e.getMessage());
+        }
+        return 0L;
     }
 
 }

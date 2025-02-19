@@ -1,10 +1,8 @@
-
 import { Component } from '@angular/core';
-import { AuthService} from "../auth.service/auth.service.component";
-import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import {FormsModule} from "@angular/forms";
+import { AuthService } from "../auth.service/auth.service.component";
+import {Router, RouterLink} from '@angular/router';
+import { FormsModule } from "@angular/forms";
 import { CommonModule } from '@angular/common';
-
 
 @Component({
   selector: 'app-register',
@@ -13,15 +11,21 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [
     FormsModule,
-    RouterOutlet,
     CommonModule,
     RouterLink
   ],
 })
 export class RegisterComponent {
+  id: number = 0;
   username: string = '';
+  email: string = '';
   password: string = '';
   confirmPassword: string = '';
+  weight: number = 0;
+  age: number = 0;
+  height: number = 0;
+  sex: string = 'male';
+  role: string = 'USER';
   errorMessage: string = '';
 
   constructor(private authService: AuthService, private router: Router) {}
@@ -32,12 +36,23 @@ export class RegisterComponent {
       return;
     }
 
-    this.authService.register(this.username, this.password).subscribe(
-      () => {
-        this.router.navigate(['/login']);
+    this.authService.getNextId().subscribe(
+      (nextId) => {
+        this.id = nextId;
+
+        const url = `/register/${this.id}/${this.username}/${this.email}/${this.password}/${this.weight}/${this.age}/${this.height}/${this.sex}/${this.role}`;
+
+        this.authService.register(url).subscribe(
+          () => {
+            this.router.navigate(['/login']);
+          },
+          (error) => {
+            this.errorMessage = 'Registration failed. Try again.';
+          }
+        );
       },
       (error) => {
-        this.errorMessage = 'Registration failed. Try again.';
+        this.errorMessage = "Error fetching ID. Try again later.";
       }
     );
   }

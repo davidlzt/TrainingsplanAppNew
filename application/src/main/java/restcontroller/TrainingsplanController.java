@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/Trainingsplan")
+@RequestMapping("/api/Trainingsplan")
 public class TrainingsplanController {
 
     @Autowired
@@ -25,11 +25,7 @@ public class TrainingsplanController {
     @GetMapping("/{id}")
     public ResponseEntity<Trainingsplan> getTrainingsplanById(@PathVariable Long id) {
         Optional<Trainingsplan> trainingsplan = Optional.ofNullable(trainingsplanRepository.getTrainingsplanById(id));
-        if (trainingsplan.isPresent()) {
-            return new ResponseEntity<>(trainingsplan.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return trainingsplan.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
