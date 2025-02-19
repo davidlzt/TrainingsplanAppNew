@@ -3,6 +3,7 @@ package databasehandler;
 import databaseconnection.DatabaseConnection;
 import entitys.User;
 import valueobjects.Email;
+import valueobjects.Role;
 import valueobjects.Weight;
 import valueobjects.Height;
 
@@ -118,7 +119,7 @@ public class UserHandler {
                 int age = rs.getInt("age");
                 double groesseValue = rs.getDouble("groesse");
                 String geschlecht = rs.getString("geschlecht");
-                String role = rs.getString("role");
+                Role role = Role.valueOf(rs.getString("role"));
 
                 // Erstelle die Value Objects
                 Email email = new Email(emailString);
