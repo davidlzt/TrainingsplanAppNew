@@ -1,0 +1,14 @@
+<!-- admin-panel.component.html -->
+<div class="admin-panel">
+  <h2 class="panel-header">Admin Panel</h2>
+  <div class="exercise-list">
+    <h3>Exercises</h3>
+    <div class="exercise-item" *ngFor="let exercise of exercises">
+      <span>{{ exercise.name }}</span>
+    </div>
+  </div>
+  <div class="add-exercise">
+    <input  type="text" placeholder="Add a new exercise" />
+    <button class="btn" (click)="addExercise()">Add Exercise</button>
+  </div>
+</div>
