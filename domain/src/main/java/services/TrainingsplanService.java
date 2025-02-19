@@ -59,13 +59,13 @@ public class TrainingsplanService {
     }
 
     public void updateTrainingsplanDuration(Long trainingsplanId, Duration newDuration) {
-        Trainingsplan trainingsplan = trainingsplanRepository.getTrainingsplanById(trainingsplanId);
+        /*Trainingsplan trainingsplan = trainingsplanRepository.getTrainingsplanById(trainingsplanId);
         if (trainingsplan != null) {
             trainingsplan.setDuration(newDuration);
             trainingsplanRepository.updateTrainingsplan(trainingsplan);
         } else {
             System.out.println("Trainingsplan mit ID " + trainingsplanId + " wurde nicht gefunden.");
-        }
+        }*/
     }
 
     public void updateTrainingsplanGoal(Long trainingsplanId, String newGoal) {
