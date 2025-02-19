@@ -10,7 +10,7 @@ import {DashboardComponent} from "./features/dashboard/dashboard.component";
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule, RouterOutlet, RouterLink, RouterLinkActive, WelcomepageComponent, FooterComponent, RegisterComponent, LoginComponent,AdminPanelComponent, DashboardComponent],
+  imports: [RouterOutlet, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

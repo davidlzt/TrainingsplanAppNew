@@ -11,7 +11,13 @@ import {HttpClient, HttpClientModule} from '@angular/common/http';
   styleUrl: './welcomepage.component.scss'
 })
 export class WelcomepageComponent {
-  constructor(private router:Router) {
+  constructor(private router: Router) {}
+
+  navigateToRegister() {
+    this.router.navigate(['/register']);
   }
 
+  navigateToLogin() {
+    this.router.navigate(['/login']);
+  }
 }

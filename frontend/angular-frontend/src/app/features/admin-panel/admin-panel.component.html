@@ -1,6 +1,8 @@
-<!-- admin-panel.component.html -->
 <div class="admin-panel">
   <h2 class="panel-header">Admin Panel</h2>
+  <div class="menu-button">
+    <button class="btn" (click)="toggleMenu()">☰ Menu</button>
+  </div>
   <div class="exercise-list">
     <h3>Exercises</h3>
     <div class="exercise-item" *ngFor="let exercise of exercises">
@@ -11,4 +13,14 @@
     <input  type="text" placeholder="Add a new exercise" />
     <button class="btn" (click)="addExercise()">Add Exercise</button>
   </div>
+  <div class="menu-dropdown" *ngIf="menuVisible">
+  <ul>
+    <li><a routerLink="/dashboard">Home</a></li>
+    <li><a routerLink="/admin">Admin</a></li>
+    <li><a routerLink="/exercises">Übungen</a></li>
+    <li><a routerLink="/account">Account</a></li>
+    <li><a routerLink="">Logout</a></li>
+  </ul>
 </div>
+</div>
+

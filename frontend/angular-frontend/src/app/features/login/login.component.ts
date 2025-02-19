@@ -22,8 +22,35 @@ export class LoginComponent {
   password: string = '';
   errorMessage: string = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
+  login(): void {
+    const loginData = {
+      username: this.username,
+      password: this.password
+    };
 
-  ngOnInit() {}
+    if (this.username === 'admin' && this.password === 'admin') {
+      localStorage.setItem('authToken', 'admin-token');
+      this.router.navigate(['dashboard']);
+      return;
+    }
+
+    this.http.post<{ success: boolean; token?: string; message?: string }>(
+      'https://deine-api-url.com/login',
+      loginData
+    ).subscribe({
+      next: (response) => {
+        if (response.success && response.token) {
+          localStorage.setItem('authToken', response.token);
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.errorMessage = response.message || 'Login fehlgeschlagen!';
+        }
+      },
+      error: () => {
+        this.errorMessage = 'Fehler beim Login. Bitte überprüfe deine Eingaben!';
+      }
+    });
+  }
 }

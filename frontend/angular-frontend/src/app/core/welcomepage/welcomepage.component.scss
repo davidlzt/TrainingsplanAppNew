@@ -1,3 +1,4 @@
+/* Allgemeine Stile für HTML, Body und Container */
 html, body {
   font-family: 'Arial', sans-serif;
   background-color: #121212;
@@ -16,6 +17,7 @@ a {
   text-decoration: none;
 }
 
+/* Zentrierter Container */
 .welcome-container {
   display: flex;
   justify-content: center;
@@ -36,6 +38,7 @@ a {
   max-width: 500px;
 }
 
+/* Überschrift und Text */
 .welcome-header {
   font-size: 32px;
   color: #00bcd4;
@@ -49,35 +52,42 @@ a {
   margin-bottom: 30px;
 }
 
+/* Action Buttons */
 .action-buttons {
   display: flex;
   justify-content: center;
   gap: 20px;
 }
 
+/* Button-Stile */
 .btn {
   padding: 15px 30px;
-  background-color: #00bcd4;
-  color: white;
-  border: none;
-  border-radius: 5px;
   font-size: 18px;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s ease;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 10px rgba(0, 188, 212, 0.3);
 }
 
+/* Register Button */
 .btn.primary {
   background-color: #00bcd4;
+  color: white;
 }
 
+.btn.primary:hover {
+  background-color: #0097a7;
+  transform: scale(1.05);
+}
+
+/* Login Button */
 .btn.secondary {
   background-color: #444;
   color: white;
-}
-
-.btn:hover {
-  background-color: #0097a7;
-  transform: scale(1.05);
 }
 
 .btn.secondary:hover {
@@ -85,19 +95,8 @@ a {
   transform: scale(1.05);
 }
 
+/* Mobile-Optimierung */
 @media (max-width: 600px) {
-  .welcome-box {
-    padding: 20px;
-  }
-
-  .welcome-header {
-    font-size: 28px;
-  }
-
-  .welcome-text {
-    font-size: 16px;
-  }
-
   .action-buttons {
     flex-direction: column;
   }

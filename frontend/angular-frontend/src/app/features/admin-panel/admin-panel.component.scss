@@ -2,6 +2,7 @@
 .admin-panel {
   padding: 20px;
   background-color: #121212;
+  color: white;
 }
 
 .panel-header {
@@ -50,4 +51,50 @@
 
 .add-exercise button:hover {
   background-color: #0097a7;
+}
+.menu-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.menu-button .btn {
+  background-color: #444;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.menu-button .btn:hover {
+  background-color: #555;
+}
+
+.menu-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  background-color: #1f1f1f;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.menu-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-dropdown ul li {
+  padding: 10px;
+}
+
+.menu-dropdown ul li a {
+  color: #00bcd4;
+  text-decoration: none;
+}
+
+.menu-dropdown ul li a:hover {
+  text-decoration: underline;
 }
