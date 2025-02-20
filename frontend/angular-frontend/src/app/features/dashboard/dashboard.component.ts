@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import {NgClass, NgForOf, NgIf} from '@angular/common';
-import {Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
-import {HttpClientModule} from '@angular/common/http';
+import {AfterViewInit, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+import {FormsModule} from '@angular/forms';
+import {MenuButtonComponent} from '../../shared/menu-button/menu-button.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,76 +13,98 @@ import {HttpClientModule} from '@angular/common/http';
     NgClass,
     RouterLink,
     NgForOf,
-    NgIf,HttpClientModule,
-    RouterLink, RouterOutlet, RouterLinkActive
+    NgIf,
+    HttpClientModule,
+    RouterLink,
+    RouterOutlet,
+    RouterLinkActive,
+    FormsModule,
+    MenuButtonComponent
   ],
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit{
   currentMonth: string | undefined;
   currentYear: number | undefined;
   daysInMonth: any[] = [];
   dummyTrainings: any[] = [];
-  menuVisible = false;
   trainingCount: number = 5;
   lastTrainingDate: string = '2025-02-18';
   averageTrainingTime: number = 60;
+  trainingName: string = '';
+  trainingDescription: string = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.currentYear = new Date().getFullYear();
-    this.currentMonth = new Date().toLocaleString('default', { month: 'long' });
-    this.generateCalendar(new Date().getMonth(), this.currentYear);
-    this.generateDummyTrainings();
+    setTimeout(() => {
+      this.currentYear = new Date().getFullYear();
+      this.currentMonth = new Date().toLocaleString('default', { month: 'long' });
+      this.generateCalendar();
+      this.cdr.detectChanges();
+    });
   }
 
-  generateDummyTrainings() {
-    this.dummyTrainings = [
-      { date: 5, details: 'Leg Day' },
-      { date: 12, details: 'Cardio' },
-      { date: 18, details: 'Chest Day' },
-      { date: 22, details: 'Back Day' },
-      { date: 28, details: 'Yoga' }
-    ];
+  ngAfterViewInit() {
+    this.generateCalendar();
+    this.cdr.detectChanges();
   }
 
-  generateCalendar(month: number, year: number) {
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const numberOfDays = lastDay.getDate();
-    this.daysInMonth = [];
 
-    for (let i = 1; i <= numberOfDays; i++) {
-      let date = new Date(year, month, i);
-      this.daysInMonth.push({
-        date: i,
-        trainings: this.dummyTrainings.filter(t => t.date === i)
+
+createTraining() {
+    this.router.navigate(['/create-training'], {
+      queryParams: {
+        name: this.trainingName,
+        description: this.trainingDescription
+      }
+    });
+  }
+
+  generateCalendar() {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    let days: any[] = [];
+
+    days.push({
+      date: yesterday.getDate(),
+      month: yesterday.toLocaleString('default', { month: 'long' }),
+      trainings: this.dummyTrainings.filter(t => t.date === yesterday.getDate()),
+      isToday: false
+    });
+
+    days.push({
+      date: today.getDate(),
+      month: today.toLocaleString('default', { month: 'long' }),
+      trainings: this.dummyTrainings.filter(t => t.date === today.getDate()),
+      isToday: true
+    });
+
+    for (let i = 1; i <= 30; i++) {
+      let futureDate = new Date(today);
+      futureDate.setDate(today.getDate() + i);
+
+      days.push({
+        date: futureDate.getDate(),
+        month: futureDate.toLocaleString('default', { month: 'long' }),
+        trainings: this.dummyTrainings.filter(t => t.date === futureDate.getDate()),
+        isToday: false
       });
     }
+
+    this.daysInMonth = days.slice(0, 28);
   }
+
 
   dayHasTraining(day: any) {
     return day.trainings.length > 0;
   }
 
-  previousMonth() {
-    let currentMonth = new Date(`${this.currentMonth} 1, ${this.currentYear}`);
-    currentMonth.setMonth(currentMonth.getMonth() - 1);
-    this.currentMonth = currentMonth.toLocaleString('default', { month: 'long' });
-    this.currentYear = currentMonth.getFullYear();
-    this.generateCalendar(currentMonth.getMonth(), this.currentYear);
-  }
+  menuVisible = false;
 
-  nextMonth() {
-    let currentMonth = new Date(`${this.currentMonth} 1, ${this.currentYear}`);
-    currentMonth.setMonth(currentMonth.getMonth() + 1);
-    this.currentMonth = currentMonth.toLocaleString('default', { month: 'long' });
-    this.currentYear = currentMonth.getFullYear();
-    this.generateCalendar(currentMonth.getMonth(), this.currentYear);
-  }
-
-  toggleMenu() {
-    this.menuVisible = !this.menuVisible;
+  toggleMenu(visible: boolean) {
+    this.menuVisible = visible;
   }
 }

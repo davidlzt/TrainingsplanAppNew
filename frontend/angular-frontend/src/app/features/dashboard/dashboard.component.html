@@ -2,16 +2,7 @@
   <div class="calendar">
     <div class="calendar-header">
       <h2 class="dashboard-header">Upcoming Training Sessions</h2>
-
-      <div class="menu-button">
-        <button class="btn" (click)="toggleMenu()">☰ Menu</button>
-      </div>
-    </div>
-
-    <div class="calendar-controls">
-      <button class="btn" (click)="previousMonth()">&#8592; Letzter Monat</button>
-      <h3 class="current-date">{{ currentMonth }} {{ currentYear }}</h3>
-      <button class="btn" (click)="nextMonth()">Nächster Monat &#8594;</button>
+      <app-menu-button></app-menu-button>
     </div>
 
     <div class="calendar-box">
@@ -24,8 +15,9 @@
         <div class="calendar-cell week-header">Sa</div>
         <div class="calendar-cell week-header">So</div>
 
-        <div *ngFor="let day of daysInMonth" class="calendar-cell" [ngClass]="{'has-training': dayHasTraining(day)}">
-          <span class="calendar-date">{{ day.date }}</span>
+        <div *ngFor="let day of daysInMonth" class="calendar-cell"
+             [ngClass]="{'has-training': dayHasTraining(day), 'highlight-today': day.isToday}">
+          <span class="calendar-date">{{ day.date }} {{ day.month }}</span>
           <div *ngIf="dayHasTraining(day)" class="training-details">
             <div *ngFor="let training of day.trainings">{{ training.details }}</div>
           </div>
@@ -39,12 +31,12 @@
       <h3>Trainingsplan erstellen</h3>
       <form>
         <label for="training-name">Trainingsname</label>
-        <input type="text" id="training-name" placeholder="Name des Trainings">
+        <input type="text" id="training-name" placeholder="Name des Trainings" [(ngModel)]="trainingName" [ngModelOptions]="{standalone: true}">
 
         <label for="training-description">Beschreibung</label>
-        <textarea id="training-description" placeholder="Beschreibung des Trainings"></textarea>
+        <textarea id="training-description" placeholder="Beschreibung des Trainings" [(ngModel)]="trainingDescription" [ngModelOptions]="{standalone: true}"></textarea>
 
-        <button type="submit" class="btn">Trainingsplan erstellen</button>
+        <button type="submit" class="btn" (click)="createTraining()">Trainingsplan erstellen</button>
       </form>
     </div>
 
@@ -54,15 +46,5 @@
       <p>Letztes Training: <span>{{ lastTrainingDate }}</span></p>
       <p>Durchschnittliche Trainingszeit: <span>{{ averageTrainingTime }} Minuten</span></p>
     </div>
-  </div>
-
-  <div class="menu-dropdown" *ngIf="menuVisible">
-    <ul>
-      <li><a routerLink="/dashboard">Home</a></li>
-      <li><a routerLink="/admin">Admin</a></li>
-      <li><a routerLink="/exercises">Übungen</a></li>
-      <li><a routerLink="/account">Account</a></li>
-      <li><a routerLink="">Logout</a></li>
-    </ul>
   </div>
 </div>

@@ -1,0 +1,38 @@
+<div class="account-container">
+  <h2>Account Informationen</h2>
+<app-menu-button></app-menu-button>
+  <form #accountForm="ngForm">
+    <div class="account-info">
+      <div class="info-row">
+        <label for="name">Name:</label>
+        <span *ngIf="!isEditing">{{ user.name }}</span>
+        <input *ngIf="isEditing" type="text" id="name" [(ngModel)]="user.name" name="name" />
+      </div>
+
+      <div class="info-row">
+        <label for="email">E-Mail:</label>
+        <span *ngIf="!isEditing">{{ user.email }}</span>
+        <input *ngIf="isEditing" type="email" id="email" [(ngModel)]="user.email" name="email" />
+      </div>
+
+      <div class="info-row">
+        <label for="phone">Telefon:</label>
+        <span *ngIf="!isEditing">{{ user.phone }}</span>
+        <input *ngIf="isEditing" type="tel" id="phone" [(ngModel)]="user.phone" name="phone" />
+      </div>
+
+      <div class="info-row">
+        <label for="address">Adresse:</label>
+        <span *ngIf="!isEditing">{{ user.address }}</span>
+        <input *ngIf="isEditing" type="text" id="address" [(ngModel)]="user.address" name="address" />
+      </div>
+
+      <!-- Buttons -->
+      <div class="action-buttons">
+        <button *ngIf="!isEditing" class="btn" (click)="toggleEditMode()">Bearbeiten</button>
+        <button *ngIf="isEditing" class="btn" (click)="saveChanges(accountForm)">Speichern</button>
+        <button *ngIf="isEditing" class="btn" (click)="cancelEditing()">Abbrechen</button>
+      </div>
+    </div>
+  </form>
+</div>

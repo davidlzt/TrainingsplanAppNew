@@ -1,0 +1,13 @@
+<div class="menu-button">
+  <button class="btn" (click)="toggleMenu()">☰ Menu</button>
+</div>
+
+<div class="menu-dropdown" *ngIf="menuVisible" (click)="closeMenu()">
+  <ul>
+    <li><a routerLink="/dashboard">Home</a></li>
+    <li><a routerLink="/admin">Admin</a></li>
+    <li><a routerLink="/exercises">Übungen</a></li>
+    <li><a routerLink="/account">Account</a></li>
+    <li><a routerLink="">Logout</a></li>
+  </ul>
+</div>

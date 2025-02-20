@@ -1,0 +1,68 @@
+.menu-dropdown {
+  position: absolute;
+  top: 50px; /* Je nach Bedarf anpassen */
+  right: 0;
+  width: 200px; /* Je nach Bedarf anpassen */
+  background-color: #333;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 1000; /* Stellen sicher, dass das Menü immer im Vordergrund ist */
+}
+
+.menu-dropdown ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-dropdown li {
+  padding: 10px;
+}
+
+.menu-dropdown li a {
+  color: white;
+  text-decoration: none;
+}
+
+.menu-dropdown li a:hover {
+  background-color: #444;
+}
+
+.menu-button button {
+  background-color: #007bff;
+  border: none;
+  padding: 10px;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.menu-button button:focus {
+  outline: none;
+}
+
+.menu-button button:hover {
+  background-color: #0056b3;
+}
+
+.menu-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #45a049;
+}
+

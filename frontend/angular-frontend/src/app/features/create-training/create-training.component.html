@@ -1,0 +1,64 @@
+<div class="training-container">
+  <div class="training-header">
+    <h2>Trainingsplan erstellen</h2>
+    <app-menu-button></app-menu-button>
+  </div>
+
+  <div *ngIf="step === 1" class="step-container">
+    <h3>Wie oft möchtest du pro Woche trainieren?</h3>
+    <div class="day-selection">
+      <button *ngFor="let day of [1, 2, 3, 4, 5, 6, 7]"
+              (click)="setTrainingDays(day)"
+              [ngClass]="{'selected': day === selectedTrainingDays}">
+        {{ day }}x pro Woche
+      </button>
+    </div>
+    <button class="btn next-btn" [disabled]="!selectedTrainingDays" (click)="nextStep()">Weiter</button>
+  </div>
+
+  <div *ngIf="step === 2" class="step-container">
+    <h3>Training für: {{ trainingName }}</h3>
+
+    <div class="week-schedule">
+      <div *ngFor="let day of trainingWeek; let i = index" class="day-box" [ngClass]="{'rest-day': day.isRest}">
+        <span class="day-label">{{ dayNames[i] }}</span>
+
+        <span *ngIf="day.isRest" class="rest-label">Ruhetag</span>
+
+        <div *ngIf="!day.isRest">
+          <div *ngFor="let exercise of availableMuscleGroups">
+            <input type="checkbox" [(ngModel)]="day.selectedExercises[exercise]" /> {{ exercise }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-container">
+      <button class="btn back-btn" (click)="previousStep()">Zurück</button>
+      <button class="btn next-btn" (click)="onToStep3()" [disabled]="!isExerciseSelected()">Weiter</button>
+    </div>
+  </div>
+
+  <div *ngIf="step === 3" class="step-container">
+    <h3>Übersicht</h3>
+    <div class="week-schedule">
+      <div *ngFor="let day of trainingWeek; let i = index">
+        <ng-container *ngIf="!day.isRest">
+          <div class="day-box">
+            <h4>{{ dayNames[i] }}</h4>
+            <h5>{{ getSelectedExercises(day)}}</h5>
+            <div class="selected-excercises">
+              <label for="exercise-{{i}}">Übungen:</label>
+              <select [(ngModel)]="day.selectedExercise" id="exercise-{{i}}">
+                <option *ngFor="let exercise of availableExercises" [value]="exercise">{{ exercise }}</option>
+              </select>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+    </div>
+
+    <button class="save-btn" (click)="saveTraining()">Training speichern</button>
+  </div>
+</div>

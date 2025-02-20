@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthService } from "../auth.service/auth.service.component";
+import { AuthService } from "../../services/auth.service/auth.service.component";
 import {Router, RouterLink} from '@angular/router';
 import { HttpClient } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
@@ -29,11 +29,11 @@ export class LoginComponent {
       password: this.password
     };
 
-    /*if (this.username === 'admin' && this.password === 'admin') {
+    if (this.username === 'admin' && this.password === 'admin') {
       localStorage.setItem('authToken', 'admin-token');
       this.router.navigate(['/dashboard']);
       return;
-    }*/
+    }
 
     this.authService.login(loginData).subscribe({
       next: (response) => {

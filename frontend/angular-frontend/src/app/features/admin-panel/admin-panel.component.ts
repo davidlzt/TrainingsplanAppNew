@@ -1,35 +1,62 @@
-import { Component, OnInit } from '@angular/core';
-import {Router, RouterLink} from "@angular/router";
-import {NgForOf, NgIf} from "@angular/common";
+import { Component } from '@angular/core';
+import { ExerciseService } from '../../services/exercise.service/exercise.service.component';
+import { Exercise } from '../exercises/exercises.component';
+import {FormsModule} from '@angular/forms';
+import {MenuButtonComponent} from '../../shared/menu-button/menu-button.component';
+import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-admin-panel',
   templateUrl: './admin-panel.component.html',
-  styleUrl: './admin-panel.component.scss',
-    imports: [
-        NgForOf,
-        NgIf,
-        RouterLink
-    ],
-  standalone: true
+  standalone: true,
+  imports: [
+    FormsModule,
+    MenuButtonComponent,
+    NgIf,
+    NgForOf
+  ],
+  styleUrls: ['./admin-panel.component.scss']
 })
-export class AdminPanelComponent implements OnInit {
-  exercises: any[] = [];
-  newExercise: string = '';
-  menuVisible = false;
+export class AdminPanelComponent {
+  isFormVisible = false;
+  newExercise: Exercise = { id:'', name: '', description: '', instructions: '' };
+  exercises: Exercise[] = [];
 
-  constructor(private router :Router) {}
+  constructor(private exerciseService: ExerciseService) {}
 
-  ngOnInit(): void {
+  toggleForm() {
+    this.isFormVisible = !this.isFormVisible;
+  }
+
+  addExercise() {
+    if (this.newExercise.name && this.newExercise.description && this.newExercise.instructions) {
+      this.exerciseService.addExercise(this.newExercise).subscribe((exercise) => {
+        this.exercises.push(exercise); // Neue Übung zur Liste hinzufügen
+        this.newExercise = { id: '',name: '', description: '', instructions: '' };
+        this.isFormVisible = false;
+      });
+    }
+  }
+
+  showAllExercises() {
+    this.exerciseService.getExercises().subscribe(data => {
+      this.exercises = data;
+    });
+  }
+
+  removeExercise(exerciseId: string) {
+    this.exerciseService.removeExercise(exerciseId).subscribe(() => {
+      this.exercises = this.exercises.filter(exercise => exercise.id !== exerciseId);
+    });
+  }
+
+  ngOnInit() {
     this.loadExercises();
   }
 
-  loadExercises(): void {
-    }
-
-  addExercise(): void {
-  }
-  toggleMenu() {
-    this.menuVisible = !this.menuVisible;
+  loadExercises() {
+    this.exerciseService.getExercises().subscribe(data => {
+      this.exercises = data;
+    });
   }
 }

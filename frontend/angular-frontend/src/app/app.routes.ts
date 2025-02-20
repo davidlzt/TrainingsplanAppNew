@@ -4,6 +4,9 @@ import {RegisterComponent} from './features/register/register.component';
 import {LoginComponent} from './features/login/login.component';
 import {DashboardComponent} from './features/dashboard/dashboard.component';
 import {AdminPanelComponent} from './features/admin-panel/admin-panel.component';
+import {CreateTrainingComponent} from './features/create-training/create-training.component';
+import {ExercisesComponent} from './features/exercises/exercises.component';
+import {AccountComponent} from './features/account/account.component';
 
 export const routes: Routes = [
   {
@@ -30,5 +33,14 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminPanelComponent,
-  }
+  },
+  { path: 'create-training',
+    component: CreateTrainingComponent
+  },
+  { path: 'exercises',
+    component: ExercisesComponent
+  },
+  { path: 'account',
+    component: AccountComponent
+  },
 ];

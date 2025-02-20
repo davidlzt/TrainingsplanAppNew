@@ -10,6 +10,9 @@ import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import {RouterModule} from '@angular/router';
 import {routes} from './app.routes';
+import {CreateTrainingComponent} from './features/create-training/create-training.component';
+import {MenuButtonComponent} from './shared/menu-button/menu-button.component';
+import {ExercisesComponent} from './features/exercises/exercises.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +28,9 @@ import {routes} from './app.routes';
     DashboardComponent,
     RouterModule.forRoot(routes),
     AppComponent,
+    CreateTrainingComponent,
+    MenuButtonComponent,
+    ExercisesComponent
   ],
   providers: [],
   bootstrap: []
