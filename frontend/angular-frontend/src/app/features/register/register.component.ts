@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from "../../services/auth.service/auth.service.component";
-import {Router, RouterLink} from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from '@angular/common';
 
@@ -11,12 +11,11 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [
     FormsModule,
-    CommonModule,
-    RouterLink
+    CommonModule
   ],
 })
 export class RegisterComponent {
-  id: number = 0;
+  id: number | undefined;
   username: string = '';
   email: string = '';
   password: string = '';
@@ -30,29 +29,41 @@ export class RegisterComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
+  ngOnInit() {
+    /*this.authService.getNextId().subscribe(
+      (nextId) => {
+        this.id = nextId;
+      },
+      (error) => {
+        this.errorMessage = "Error fetching ID. Try again later.";
+      }
+    );*/
+  }
+
   register(): void {
     if (this.password !== this.confirmPassword) {
       this.errorMessage = "Passwords do not match!";
       return;
     }
 
-    this.authService.getNextId().subscribe(
-      (nextId) => {
-        this.id = nextId;
+    const userData = {
+      id: this.id,
+      username: this.username,
+      email: this.email,
+      password: this.password,
+      weight: this.weight,
+      age: this.age,
+      height: this.height,
+      sex: this.sex,
+      role: this.role
+    };
 
-        const url = `/register/${this.id}/${this.username}/${this.email}/${this.password}/${this.weight}/${this.age}/${this.height}/${this.sex}/${this.role}`;
-
-        this.authService.register(url).subscribe(
-          () => {
-            this.router.navigate(['/login']);
-          },
-          (error) => {
-            this.errorMessage = 'Registration failed. Try again.';
-          }
-        );
+    this.authService.register(userData).subscribe(
+      () => {
+        this.router.navigate(['/login']);
       },
-      (error) => {
-        this.errorMessage = "Error fetching ID. Try again later.";
+      () => {
+        this.errorMessage = 'Registration failed. Try again.';
       }
     );
   }

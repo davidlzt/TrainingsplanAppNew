@@ -33,6 +33,7 @@ import {ExercisesComponent} from './features/exercises/exercises.component';
     ExercisesComponent
   ],
   providers: [],
-  bootstrap: []
+  bootstrap: [],
+  exports: [RouterModule]
 })
 export class AppModule { }

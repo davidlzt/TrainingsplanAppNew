@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/Trainingsplan")
+@RequestMapping("/Trainingsplan")
 public class TrainingsplanController {
 
     @Autowired
@@ -19,7 +19,7 @@ public class TrainingsplanController {
 
     @GetMapping
     public List<Trainingsplan> getAllTrainingsplaene() {
-        return trainingsplanRepository.getAllTrainingsplaene();
+        return trainingsplanRepository.findAll();
     }
 
     @GetMapping("/{id}")
@@ -47,7 +47,7 @@ public class TrainingsplanController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTrainingsplan(@PathVariable Long id) {
         if (trainingsplanRepository.getTrainingsplanById(id) != null) {
-            trainingsplanRepository.deleteTrainingsplan(id);
+            trainingsplanRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

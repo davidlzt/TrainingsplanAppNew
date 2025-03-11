@@ -1,41 +1,47 @@
 package services;
 
 import entitys.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import repositories.UserRepository;
-import valueobjects.Email;
-import valueobjects.Height;
 import valueobjects.Role;
-import valueobjects.Weight;
 
+@Service
 public class UserService {
 
     private final UserRepository userRepository;
 
+    @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public void registerUser(Long id, String username, Email email, String password, Weight weight, int age, Height height, String sex, Role role) {
-        User user = new User(id, username, email, password, weight, age, height, sex, role);
-        userRepository.insertUser(user);
+    @Transactional
+    public void registerUser(User user) {
+        userRepository.save(user);
     }
 
     public boolean authenticateUser(String username, String password) {
-        User user = userRepository.getUserByUsername(username);
+        User user = userRepository.findByUsername(username);
         return user != null && user.getPassword().equals(password);
     }
 
+
+    @Transactional
     public void changeUserRole(Long userId, Role newRole) {
         userRepository.updateUserRole(userId, newRole);
     }
 
+    @Transactional
     public void changePassword(Long userId, String newPassword) {
-        User user = userRepository.getUserByUsername(userId.toString());  // Get by userId
+        User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
-            user.changePassword(newPassword);
-            userRepository.insertUser(user);
+            user.setPassword(newPassword);
+            userRepository.save(user);
         } else {
             throw new IllegalArgumentException("User not found");
         }
     }
+
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from "../../services/auth.service/auth.service.component";
-import {Router, RouterLink} from '@angular/router';
+import {Router, RouterLink, RouterModule} from '@angular/router';
 import { HttpClient } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
 import { NgIf } from "@angular/common";
@@ -12,7 +12,8 @@ import { NgIf } from "@angular/common";
   imports: [
     FormsModule,
     NgIf,
-    RouterLink
+    RouterLink,
+    RouterModule
   ],
   standalone: true
 })
@@ -29,22 +30,23 @@ export class LoginComponent {
       password: this.password
     };
 
-    if (this.username === 'admin' && this.password === 'admin') {
-      localStorage.setItem('authToken', 'admin-token');
-      this.router.navigate(['/dashboard']);
-      return;
-    }
-
     this.authService.login(loginData).subscribe({
       next: (response) => {
-        if (response.success && response.token) {
-          localStorage.setItem('authToken', response.token);
-          this.router.navigate(['/dashboard']);
+        console.log("Login Response:", response);
+
+        if (response.success) {
+          console.log("Navigiere zu /dashboard");
+          this.router.navigate(['/dashboard']).then(success => {
+            console.log("Navigation erfolgreich:", success);
+          }).catch(err => {
+            console.error("Navigation fehlgeschlagen:", err);
+          });
         } else {
           this.errorMessage = response.message || 'Login failed!';
         }
       },
-      error: () => {
+      error: (err) => {
+        console.error("Login Error:", err);
         this.errorMessage = 'Error logging in. Please check your credentials!';
       }
     });

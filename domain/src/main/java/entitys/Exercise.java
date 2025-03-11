@@ -1,17 +1,39 @@
 package entitys;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import valueobjects.Muscle;
 
 import java.util.List;
 
+@Entity
+@Getter
+@Setter
 public class Exercise {
+
+    @Id
     private Long id;
     private String name;
     private String difficulty;
     private String image;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "exercise_target_muscles", joinColumns = @JoinColumn(name = "exercise_id"))
     private List<Muscle> targetMuscles;
+
     private String description;
+
+    @OneToMany
+    @JoinTable(
+            name = "exercise_device",
+            joinColumns = @JoinColumn(name = "exercise_id"),
+            inverseJoinColumns = @JoinColumn(name = "device_id")
+    )
     private List<Device> devices;
+
+    public Exercise() {
+    }
 
     public Exercise(String name, String difficulty, String image, List<Muscle> targetMuscles, String description, List<Device> devices) {
         this.name = name;
@@ -19,62 +41,6 @@ public class Exercise {
         this.image = image;
         this.targetMuscles = targetMuscles;
         this.description = description;
-        this.devices = devices;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(String difficulty) {
-        this.difficulty = difficulty;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public List<Muscle> getTargetMuscles() {
-        return targetMuscles;
-    }
-
-    public void setTargetMuscles(List<Muscle> targetMuscles) {
-        this.targetMuscles = targetMuscles;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<Device> getDevices() {
-        return devices;
-    }
-
-    public void setDevices(List<Device> devices) {
         this.devices = devices;
     }
 

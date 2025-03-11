@@ -1,9 +1,14 @@
 package valueobjects;
 
+import jakarta.persistence.Embeddable;
+import lombok.Getter;
+
 import java.util.Objects;
 
+@Getter
+@Embeddable
 public class Height {
-    private final double value;
+    private double value;
 
     public Height(double value) {
         if (value <= 0) {
@@ -12,8 +17,8 @@ public class Height {
         this.value = value;
     }
 
-    public double getValue() {
-        return value;
+    public Height() {
+
     }
 
     @Override

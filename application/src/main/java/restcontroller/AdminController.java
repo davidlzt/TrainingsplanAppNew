@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-@RequestMapping("/api/admin")
+@RequestMapping("/admin")
 public class AdminController {
 
     @GetMapping("/exercises")

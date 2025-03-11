@@ -17,7 +17,7 @@ public class TrainingsplanService {
 
     public void createTrainingsplan(Long id, String name, String description, Duration duration, String goal, List<Exercise> exercises) {
         Trainingsplan trainingsplan = new Trainingsplan(id, name, description, duration, goal, exercises);
-        trainingsplanRepository.insertTrainingsplan(trainingsplan);
+        trainingsplanRepository.save(trainingsplan);
     }
 
 
@@ -26,7 +26,7 @@ public class TrainingsplanService {
     }
 
     public List<Trainingsplan> getAllTrainingsplaene() {
-        return trainingsplanRepository.getAllTrainingsplaene();
+        return trainingsplanRepository.findAll();
     }
 
     public void updateTrainingsplan(Long id, String name, String description, Duration duration, String goal, List<Exercise> exercises) {
@@ -35,7 +35,7 @@ public class TrainingsplanService {
     }
 
     public void deleteTrainingsplan(Long id) {
-        trainingsplanRepository.deleteTrainingsplan(id);
+        trainingsplanRepository.deleteById(id);
     }
 
     public void addExerciseToTrainingsplan(Long trainingsplanId, Exercise exercise) {

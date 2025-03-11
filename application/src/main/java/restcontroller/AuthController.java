@@ -1,40 +1,48 @@
 package restcontroller;
 
-import Services.AuthService;
+import services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import repositories.UserRepository;
-import valueobjects.Email;
-import valueobjects.Height;
-import valueobjects.Role;
-import valueobjects.Weight;
+import entitys.User;
+import restcontroller.util.LoginRequest;
+
+import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/auth")
-
+@CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS})
 public class AuthController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("/login/{username}/{password}")
-    public boolean login(@PathVariable String username, @PathVariable String password) {
-        return authService.verifyUser(username, password);
-    }
-
-    @GetMapping("/register/next-id")
+    @GetMapping("/register/nextid")
     public Long getNextUserId() {
         Long maxId = userRepository.findMaxId();
+        System.out.println("Max ID found: " + maxId);
         return (maxId != null) ? maxId + 1 : 1;
     }
 
+    @PostMapping("/register")
+    public void register(@RequestBody User user) {
+        authService.registerUser(user);
+    }
 
-    @GetMapping("/register/{id}/{username}/{email}/{password}/{weight}/{age}/{height}/{sex}/{role}")
-    public void register(@PathVariable Long id, @PathVariable String username, @PathVariable Email email, @PathVariable String password,
-                         @PathVariable Weight weight, @PathVariable int age, @PathVariable Height height, @PathVariable String sex,
-                         @PathVariable Role role) {
-        authService.registerUser(id, username, email, password, weight, age, height, sex, role);
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        if (authService.verifyUser(loginRequest.getUsername(), loginRequest.getPassword())) {
+            System.out.println("Login successful");
+            return ResponseEntity.ok(Map.of("success", true));
+
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("success", false, "message", "Invalid credentials"));
+        }
     }
 }

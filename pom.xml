@@ -53,6 +53,17 @@
 				<artifactId>spring-boot-starter-test</artifactId>
 				<scope>test</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents.client5</groupId>
+				<artifactId>httpclient5</artifactId>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<scope>runtime</scope>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 

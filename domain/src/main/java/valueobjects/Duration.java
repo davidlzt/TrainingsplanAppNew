@@ -1,5 +1,10 @@
 package valueobjects;
 
+import jakarta.persistence.Embeddable;
+import lombok.Getter;
+
+@Getter
+@Embeddable
 public class Duration {
     private int durationInWeeks;
 
@@ -10,8 +15,8 @@ public class Duration {
         this.durationInWeeks = durationInWeeks;
     }
 
-    public int getDurationInWeeks() {
-        return durationInWeeks;
+    public Duration() {
+
     }
 
     @Override

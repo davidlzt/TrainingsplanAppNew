@@ -1,24 +1,41 @@
 package entitys;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import valueobjects.Duration;
 
 import java.util.List;
 
+@Entity
 public class Trainingsplan {
+
+    @Id
     @Getter
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Getter
+    @Setter
     private String name;
+
     @Getter
+    @Setter
     private String description;
+
     @Setter
     private Duration duration;
+
     @Getter
+    @Setter
     private String goal;
+
     @Getter
+    @OneToMany
     private List<Exercise> exercises;
+
+    public Trainingsplan() {
+    }
 
     public Trainingsplan(Long id, String name, String description, Duration duration, String goal, List<Exercise> exercises) {
         this.id = id;
@@ -48,7 +65,7 @@ public class Trainingsplan {
     }
 
     public void printTrainingsplan() {
-        System.out.println("aggregate.Trainingsplan: " + name);
+        System.out.println("Trainingsplan: " + name);
         System.out.println("Ziel: " + goal);
         System.out.println("Beschreibung: " + description);
         System.out.println("Dauer: " + duration.getDurationInWeeks() + " Wochen");

@@ -1,9 +1,13 @@
 package valueobjects;
 
-import java.util.Objects;
+import jakarta.persistence.Embeddable;
+import lombok.Getter;
 
+import java.util.Objects;
+@Getter
+@Embeddable
 public class Weight {
-    private final double value;
+    private double value;
 
     public Weight(double value) {
         if (value <= 0) {
@@ -12,8 +16,8 @@ public class Weight {
         this.value = value;
     }
 
-    public double getValue() {
-        return value;
+    public Weight() {
+
     }
 
     @Override

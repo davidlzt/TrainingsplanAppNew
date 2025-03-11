@@ -2,10 +2,8 @@ package databasehandler;
 
 import databaseconnection.DatabaseConnection;
 import entitys.User;
-import valueobjects.Email;
-import valueobjects.Role;
-import valueobjects.Weight;
-import valueobjects.Height;
+import jakarta.persistence.GeneratedValue;
+import valueobjects.*;
 
 import java.sql.*;
 import java.util.List;
@@ -14,7 +12,7 @@ import java.util.ArrayList;
 public class UserHandler {
 
     public void insertUser(String username, String email, String password, double gewicht, int age, double groesse, String geschlecht, String role) {
-        if (!isValidRole(role)) {
+        if (isValidRole(role)) {
             System.out.println("Ungültige Rolle! Zulässige Werte: admin, moderator, user, vip.");
             return;
         }
@@ -40,7 +38,7 @@ public class UserHandler {
 
     private boolean isValidRole(String role) {
         List<String> validRoles = List.of("admin", "moderator", "user", "vip");
-        return validRoles.contains(role);
+        return !validRoles.contains(role);
     }
 
     public boolean validateUser(String username, String password) {
@@ -84,7 +82,7 @@ public class UserHandler {
             return;
         }
 
-        if (!isValidRole(newRole)) {
+        if (isValidRole(newRole)) {
             System.out.println("Ungültige Rolle.");
             return;
         }
@@ -118,15 +116,14 @@ public class UserHandler {
                 double gewichtValue = rs.getDouble("gewicht");
                 int age = rs.getInt("age");
                 double groesseValue = rs.getDouble("groesse");
-                String geschlecht = rs.getString("geschlecht");
+                String genderValue = rs.getString("geschlecht");
                 Role role = Role.valueOf(rs.getString("role"));
 
-                // Erstelle die Value Objects
                 Email email = new Email(emailString);
                 Weight weight = new Weight(gewichtValue);
                 Height height = new Height(groesseValue);
+                Gender geschlecht = Gender.valueOf(genderValue.toUpperCase());
 
-                // Erstelle den User und füge ihn der Liste hinzu
                 User user = new User(id, username, email, password, weight, age, height, geschlecht, role);
                 user.setId(id);
                 users.add(user);

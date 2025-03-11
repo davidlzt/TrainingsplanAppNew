@@ -8,6 +8,7 @@ import {CreateTrainingComponent} from './features/create-training/create-trainin
 import {ExercisesComponent} from './features/exercises/exercises.component';
 import {AccountComponent} from './features/account/account.component';
 
+
 export const routes: Routes = [
   {
     path: '',

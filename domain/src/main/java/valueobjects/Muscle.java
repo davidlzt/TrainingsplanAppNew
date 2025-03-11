@@ -1,5 +1,8 @@
 package valueobjects;
 
+import lombok.Getter;
+
+@Getter
 public enum Muscle {
     BIZEPS("Bizeps", "Der Bizeps ist der Hauptmuskel im Oberarm, der bei Armbeugen aktiviert wird."),
 
@@ -40,13 +43,6 @@ public enum Muscle {
         this.description = description;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 
     public static void printAllMuscles() {
         for (Muscle muscle : Muscle.values()) {

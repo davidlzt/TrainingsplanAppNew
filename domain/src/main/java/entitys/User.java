@@ -1,83 +1,49 @@
 package entitys;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import valueobjects.Email;
-import valueobjects.Role;
-import valueobjects.Weight;
-import valueobjects.Height;
+import lombok.*;
+import valueobjects.*;
 
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Table(name = "users")
 public class User {
-    @Setter
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String username;
+
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "email"))
     private Email email;
+
     private String password;
+
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "gewicht"))
     private Weight weight;
+
     private int age;
-    @Getter
+
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "groesse"))
     private Height height;
-    @Getter
-    private String sex;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "geschlecht")
+    private Gender geschlecht;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
     private Role role;
-
-    public User(Long id,String username, Email email, String password, Weight weight, int age, Height height, String sex, Role role) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.weight = weight;
-        this.age = age;
-        this.height = height;
-        this.sex = sex;
-        this.role = role;
-    }
-
-    protected User() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public Email getEmail() { return email; }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public Weight getWeight() {
-        return weight;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public Height getHeight() {
-        return height;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public Role getRole() {
-        return role;
-    }
 
     public void changePassword(String newPassword) {
         if (newPassword == null || newPassword.length() < 8) {
@@ -98,19 +64,4 @@ public class User {
     public int hashCode() {
         return Objects.hash(id);
     }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email=" + email +
-                ", gewicht=" + weight +
-                ", age=" + age +
-                ", groesse=" + height +
-                ", sex='" + sex + '\'' +
-                ", role='" + role + '\'' +
-                '}';
-    }
-
 }
