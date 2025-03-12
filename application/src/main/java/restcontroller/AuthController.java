@@ -36,13 +36,19 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        if (authService.verifyUser(loginRequest.getUsername(), loginRequest.getPassword())) {
-            System.out.println("Login successful");
-            return ResponseEntity.ok(Map.of("success", true));
-
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("success", false, "message", "Invalid credentials"));
+        try {
+            if (authService.verifyUser(loginRequest.getUsername(), loginRequest.getPassword())) {
+                System.out.println("Login successful");
+                return ResponseEntity.ok(Map.of("success", true));
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("success", false, "message", "Invalid credentials"));
+            }
+        } catch (Exception e) {
+            System.err.println("Error occurred during login: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "message", "An error occurred during login"));
         }
     }
 }

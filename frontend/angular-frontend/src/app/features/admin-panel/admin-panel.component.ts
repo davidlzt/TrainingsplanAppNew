@@ -1,26 +1,39 @@
 import { Component } from '@angular/core';
 import { ExerciseService } from '../../services/exercise.service/exercise.service.component';
 import { Exercise } from '../exercises/exercises.component';
-import {FormsModule} from '@angular/forms';
-import {MenuButtonComponent} from '../../shared/menu-button/menu-button.component';
-import {NgForOf, NgIf} from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MenuButtonComponent } from '../../shared/menu-button/menu-button.component';
+import { NgForOf, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-admin-panel',
   templateUrl: './admin-panel.component.html',
   standalone: true,
-  imports: [
-    FormsModule,
-    MenuButtonComponent,
-    NgIf,
-    NgForOf
-  ],
+  imports: [FormsModule, MenuButtonComponent, NgIf, NgForOf],
   styleUrls: ['./admin-panel.component.scss']
 })
 export class AdminPanelComponent {
   isFormVisible = false;
-  newExercise: Exercise = { id:'', name: '', description: '', instructions: '' };
+  newExercise: {
+    name: string;
+    description: string;
+    instructions: string;
+    difficulty: string;
+    image: string;
+    targetMuscles: string[];
+    devices: string[];
+  } = {
+    name: '',
+    description: '',
+    instructions: '',
+    difficulty: '',
+    image: '',
+    targetMuscles: [],
+    devices: []
+  };
   exercises: Exercise[] = [];
+  showConfirmation = false;
+  exerciseToRemove: Exercise | null = null;
 
   constructor(private exerciseService: ExerciseService) {}
 
@@ -31,23 +44,41 @@ export class AdminPanelComponent {
   addExercise() {
     if (this.newExercise.name && this.newExercise.description && this.newExercise.instructions) {
       this.exerciseService.addExercise(this.newExercise).subscribe((exercise) => {
-        this.exercises.push(exercise); // Neue Übung zur Liste hinzufügen
-        this.newExercise = { id: '',name: '', description: '', instructions: '' };
+        this.exercises.push(exercise);
+        this.newExercise = {
+          name: '',
+          description: '',
+          instructions: '',
+          difficulty: '',
+          image: '',
+          targetMuscles: [],
+          devices: []
+        };
         this.isFormVisible = false;
       });
     }
   }
 
-  showAllExercises() {
-    this.exerciseService.getExercises().subscribe(data => {
-      this.exercises = data;
-    });
+  confirmRemove(exercise: Exercise) {
+    this.exerciseToRemove = exercise;
+    this.showConfirmation = true;
   }
 
-  removeExercise(exerciseId: string) {
-    this.exerciseService.removeExercise(exerciseId).subscribe(() => {
-      this.exercises = this.exercises.filter(exercise => exercise.id !== exerciseId);
-    });
+  removeExercise() {
+    if (this.exerciseToRemove) {
+      this.exerciseService.removeExercise(this.exerciseToRemove.id).subscribe(() => {
+        this.exercises = this.exercises.filter(
+          (exercise) => exercise.id !== this.exerciseToRemove?.id
+        );
+        this.showConfirmation = false;
+        this.exerciseToRemove = null;
+      });
+    }
+  }
+
+  cancelRemove() {
+    this.showConfirmation = false;
+    this.exerciseToRemove = null;
   }
 
   ngOnInit() {
@@ -55,7 +86,7 @@ export class AdminPanelComponent {
   }
 
   loadExercises() {
-    this.exerciseService.getExercises().subscribe(data => {
+    this.exerciseService.getExercises().subscribe((data) => {
       this.exercises = data;
     });
   }

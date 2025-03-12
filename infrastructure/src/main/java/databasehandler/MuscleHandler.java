@@ -1,7 +1,7 @@
 package databasehandler;
 
 import databaseconnection.DatabaseConnection;
-import valueobjects.Muscle;
+import entitys.Muscle;
 
 import java.sql.*;
 

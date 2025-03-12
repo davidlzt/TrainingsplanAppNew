@@ -69,3 +69,27 @@ button.btn[disabled] {
 .action-buttons button {
   width: 48%;
 }
+.user-header {
+  cursor: pointer;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+  color: black;
+}
+
+.user-header:hover {
+  background-color: #e0e0e0;
+}
+
+.user-details {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  margin-top: 5px;
+  color: black;
+}
+
+.dropdown-icon {
+  float: right;
+}

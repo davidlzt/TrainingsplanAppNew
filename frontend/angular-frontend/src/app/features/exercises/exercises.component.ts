@@ -31,8 +31,13 @@ export class ExercisesComponent implements OnInit {
   }
 
   loadExercises() {
-    this.exerciseService.getExercises().subscribe(data => {
-      this.exercises = data;
+    this.exerciseService.getExercises().subscribe({
+      next: (data) => {
+        this.exercises = data;
+      },
+      error: (err) => {
+        console.error('Fehler beim Laden der Übungen:', err);
+      }
     });
   }
 

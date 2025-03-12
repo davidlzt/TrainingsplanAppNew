@@ -2,23 +2,37 @@
   <h2 class="panel-header">Admin Panel</h2>
   <app-menu-button></app-menu-button>
 
-  <button class="btn" (click)="toggleForm()">+ Add Exercise</button>
-
-  <button class="btn" (click)="showAllExercises()">Show All Exercises</button>
+  <button class="btn add-exercise-btn" (click)="toggleForm()">+ Add Exercise</button>
 
   <div *ngIf="isFormVisible" class="add-exercise-form">
     <input [(ngModel)]="newExercise.name" type="text" placeholder="Name" />
     <input [(ngModel)]="newExercise.description" type="text" placeholder="Description" />
     <input [(ngModel)]="newExercise.instructions" type="text" placeholder="Instructions" />
 
-    <button class="btn" (click)="addExercise()">Add Exercise</button>
+    <input [(ngModel)]="newExercise.difficulty" type="text" placeholder="Difficulty (e.g., Beginner, Intermediate, Advanced)" />
+
+    <input [(ngModel)]="newExercise.image" type="text" placeholder="Image URL" />
+
+    <input [(ngModel)]="newExercise.targetMuscles" type="text" placeholder="Target Muscles (comma separated)" />
+
+    <input [(ngModel)]="newExercise.devices" type="text" placeholder="Devices (comma separated)" />
+
+    <button class="btn add-exercise-btn" (click)="addExercise()">Add Exercise</button>
   </div>
 
   <div class="exercise-list" *ngIf="exercises.length > 0">
     <h3>Exercises</h3>
     <div class="exercise-item" *ngFor="let exercise of exercises">
-      <span>{{ exercise.name }}</span>
-      <button class="btn" (click)="removeExercise(exercise.id)">Remove</button>
+      <div class="exercise-text">
+        <span>{{ exercise.name }}</span>
+      </div>
+      <button class="btn remove-exercise-btn" (click)="confirmRemove(exercise)">Remove</button>
     </div>
+  </div>
+
+  <div *ngIf="showConfirmation" class="confirmation-popup">
+    <p>Are you sure you want to delete this exercise?</p>
+    <button class="btn confirm-btn" (click)="removeExercise()">Yes</button>
+    <button class="btn cancel-btn" (click)="cancelRemove()">No</button>
   </div>
 </div>

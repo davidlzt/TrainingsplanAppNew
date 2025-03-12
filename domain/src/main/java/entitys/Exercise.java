@@ -3,7 +3,6 @@ package entitys;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import valueobjects.Muscle;
 
 import java.util.List;
 
@@ -13,16 +12,19 @@ import java.util.List;
 public class Exercise {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+    private String description;
     private String difficulty;
     private String image;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "exercise_target_muscles", joinColumns = @JoinColumn(name = "exercise_id"))
-    private List<Muscle> targetMuscles;
+    @Version
+    private Integer version;
 
-    private String description;
+    @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Muscle> targetMuscles;
 
     @OneToMany
     @JoinTable(

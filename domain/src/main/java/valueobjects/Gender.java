@@ -2,5 +2,5 @@ package valueobjects;
 
 
 public enum Gender {
-    MALE, FEMALE;
+    MALE, FEMALE, male, female;
 }

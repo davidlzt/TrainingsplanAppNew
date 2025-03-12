@@ -7,7 +7,11 @@ public enum Role {
     ADMIN("admin"),
     USER("user"),
     MODERATOR("moderator"),
-    VIP("vip");
+    VIP("vip"),
+    admin("admin"),
+    user("user"),
+    moderator("moderator"),
+    vip("vip");
 
     private final String rolename;
 

@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import repositories.UserRepository;
 import valueobjects.Role;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -43,5 +45,12 @@ public class UserService {
             throw new IllegalArgumentException("User not found");
         }
     }
+    public List<User> getAllUsers() {
+        List<User> allUser = userRepository.findAll();
+        return allUser;
+    }
 
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
 }

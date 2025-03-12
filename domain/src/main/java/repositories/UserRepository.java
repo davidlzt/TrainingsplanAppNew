@@ -7,6 +7,8 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import valueobjects.Role;
 
+import java.util.List;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -14,6 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT MAX(u.id) FROM User u")
     Long findMaxId();
+
+    List<User> findAll();
 
     @Override
     @NonNull

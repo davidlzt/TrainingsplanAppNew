@@ -4,11 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name = "device")
-@Getter
 @Setter
-public class Device {
+@Getter
+@Entity
+public class Muscle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,26 +15,27 @@ public class Device {
 
     private String name;
     private String description;
-    private String type;
-    private String image;
 
-    public Device() {
+    @ManyToOne
+    @JoinColumn(name = "exercise_id")
+    private Exercise exercise;
+
+    public Muscle() {
     }
 
-    public Device(String name, String description, String type, String image) {
+    public Muscle(String name, String description, Exercise exercise) {
         this.name = name;
         this.description = description;
-        this.type = type;
-        this.image = image;
+        this.exercise = exercise;
     }
 
     @Override
     public String toString() {
-        return "Device{" +
-                "name='" + name + '\'' +
+        return "Muscle{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", type='" + type + '\'' +
-                ", image='" + image + '\'' +
+                ", exercise=" + exercise +
                 '}';
     }
 }

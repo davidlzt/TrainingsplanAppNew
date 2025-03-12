@@ -3,7 +3,7 @@ package databasehandler;
 import databaseconnection.DatabaseConnection;
 import entitys.Device;
 import entitys.Exercise;
-import valueobjects.Muscle;
+import entitys.Muscle;
 
 import java.sql.*;
 import java.util.List;

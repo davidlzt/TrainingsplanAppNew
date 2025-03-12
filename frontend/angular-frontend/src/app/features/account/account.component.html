@@ -1,38 +1,57 @@
 <div class="account-container">
-  <h2>Account Informationen</h2>
-<app-menu-button></app-menu-button>
-  <form #accountForm="ngForm">
-    <div class="account-info">
-      <div class="info-row">
-        <label for="name">Name:</label>
-        <span *ngIf="!isEditing">{{ user.name }}</span>
-        <input *ngIf="isEditing" type="text" id="name" [(ngModel)]="user.name" name="name" />
+  <h2>Benutzerauswahl</h2>
+  <app-menu-button></app-menu-button>
+
+  <!-- Liste der Benutzer -->
+  <div class="user-list">
+    <div *ngFor="let user of users" class="user-item">
+      <div class="user-header" (click)="toggleDropdown(user.id)">
+        <span>{{ user.username }}</span>
+        <span class="dropdown-icon">&#9660;</span> <!-- Pfeilsymbol -->
       </div>
 
-      <div class="info-row">
-        <label for="email">E-Mail:</label>
-        <span *ngIf="!isEditing">{{ user.email }}</span>
-        <input *ngIf="isEditing" type="email" id="email" [(ngModel)]="user.email" name="email" />
-      </div>
+      <!-- Details des ausgewählten Benutzers anzeigen -->
+      <div *ngIf="user.id === selectedUserId" class="user-details">
+        <form #accountForm="ngForm">
+          <div class="account-info">
+            <div class="info-row">
+              <label>Name:</label>
+              <span *ngIf="!isEditing">{{ selectedUser?.username }}</span>
+              <input *ngIf="isEditing" type="text" [(ngModel)]="selectedUser.username" name="username" />
+            </div>
 
-      <div class="info-row">
-        <label for="phone">Telefon:</label>
-        <span *ngIf="!isEditing">{{ user.phone }}</span>
-        <input *ngIf="isEditing" type="tel" id="phone" [(ngModel)]="user.phone" name="phone" />
-      </div>
+            <div class="info-row">
+              <label>E-Mail:</label>
+              <span *ngIf="!isEditing">{{ selectedUser?.email?.email }}</span>
+              <input *ngIf="isEditing" type="email" [(ngModel)]="selectedUser.email.email" name="email" />
+            </div>
 
-      <div class="info-row">
-        <label for="address">Adresse:</label>
-        <span *ngIf="!isEditing">{{ user.address }}</span>
-        <input *ngIf="isEditing" type="text" id="address" [(ngModel)]="user.address" name="address" />
-      </div>
+            <div class="info-row">
+              <label>Alter:</label>
+              <span *ngIf="!isEditing">{{ selectedUser?.age }}</span>
+              <input *ngIf="isEditing" type="number" [(ngModel)]="selectedUser.age" name="age" />
+            </div>
 
-      <!-- Buttons -->
-      <div class="action-buttons">
-        <button *ngIf="!isEditing" class="btn" (click)="toggleEditMode()">Bearbeiten</button>
-        <button *ngIf="isEditing" class="btn" (click)="saveChanges(accountForm)">Speichern</button>
-        <button *ngIf="isEditing" class="btn" (click)="cancelEditing()">Abbrechen</button>
+            <div class="info-row">
+              <label>Geschlecht:</label>
+              <span *ngIf="!isEditing">{{ selectedUser?.geschlecht }}</span>
+              <input *ngIf="isEditing" type="text" [(ngModel)]="selectedUser.geschlecht" name="geschlecht" />
+            </div>
+
+            <div class="info-row">
+              <label>Rolle:</label>
+              <span *ngIf="!isEditing">{{ selectedUser?.role }}</span>
+              <input *ngIf="isEditing" type="text" [(ngModel)]="selectedUser.role" name="role" />
+            </div>
+
+            <div class="action-buttons">
+              <button *ngIf="!isEditing" class="btn" (click)="toggleEditMode()">Bearbeiten</button>
+              <button *ngIf="isEditing" class="btn" (click)="saveChanges(accountForm)">Speichern</button>
+              <button *ngIf="isEditing" class="btn" (click)="cancelEditing()">Abbrechen</button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
-  </form>
+  </div>
 </div>
