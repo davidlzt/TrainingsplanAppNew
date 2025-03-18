@@ -5,9 +5,7 @@ import entitys.Exercise;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import repositories.DeviceRepository;
 import repositories.ExerciseRepository;
-import repositories.MuscleRepository;
 import entitys.Muscle;
 
 import java.util.List;
@@ -18,12 +16,6 @@ public class ExerciseService {
 
     @Autowired
     private ExerciseRepository exerciseRepository;
-
-    @Autowired
-    private MuscleRepository muscleRepository;
-
-    @Autowired
-    private DeviceRepository deviceRepository;
 
     public Exercise addExercise(Exercise exercise) {
         return exerciseRepository.save(exercise);
