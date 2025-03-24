@@ -1,80 +1,80 @@
 package services;
 
-import entitys.Trainingsplan;
 import entitys.Exercise;
+import entitys.Trainingsplan;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import repositories.ExerciseRepository;
 import repositories.TrainingsplanRepository;
-import valueobjects.Duration;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Service
 public class TrainingsplanService {
 
     private final TrainingsplanRepository trainingsplanRepository;
+    private final ExerciseRepository exerciseRepository;
 
-    public TrainingsplanService(TrainingsplanRepository trainingsplanRepository) {
+    @Autowired
+    public TrainingsplanService(TrainingsplanRepository trainingsplanRepository, ExerciseRepository exerciseRepository) {
         this.trainingsplanRepository = trainingsplanRepository;
+        this.exerciseRepository = exerciseRepository;
     }
 
-    public void createTrainingsplan(Long id, String name, String description, Duration duration, String goal, List<Exercise> exercises) {
-        Trainingsplan trainingsplan = new Trainingsplan(id, name, description, duration, goal, exercises);
-        trainingsplanRepository.save(trainingsplan);
-    }
+    public Trainingsplan createTrainingsplan(String name, String description, String goal, List<Integer> trainingDays, Map<Integer, Integer> selectedExercises) {
+        List<Exercise> resolvedExercises = selectedExercises.values().stream()
+                .map(exerciseId -> exerciseRepository.findById(Long.valueOf(exerciseId))
+                        .orElseThrow(() -> new IllegalArgumentException("Ungültige Übungs-ID: " + exerciseId)))
+                .collect(Collectors.toList());
 
+        Trainingsplan trainingsplan = new Trainingsplan(
+                name,
+                description,
+                goal,
+                trainingDays,
+                resolvedExercises
+        );
+
+        return trainingsplanRepository.save(trainingsplan);
+    }
 
     public Trainingsplan getTrainingsplanById(Long id) {
-        return trainingsplanRepository.getTrainingsplanById(id);
+        Optional<Trainingsplan> trainingsplan = trainingsplanRepository.findById(id);
+        return trainingsplan.orElse(null);
     }
 
     public List<Trainingsplan> getAllTrainingsplaene() {
         return trainingsplanRepository.findAll();
     }
 
-    public void updateTrainingsplan(Long id, String name, String description, Duration duration, String goal, List<Exercise> exercises) {
-        Trainingsplan trainingsplan = new Trainingsplan(id, name, description, duration, goal, exercises);
-        trainingsplanRepository.updateTrainingsplan(trainingsplan);
-    }
+    public Trainingsplan updateTrainingsplan(Long id, String name, String description, String goal, List<Integer> trainingDays, Map<Integer, Integer> selectedExercises) {
+        Optional<Trainingsplan> optionalPlan = trainingsplanRepository.findById(id);
+        if (optionalPlan.isPresent()) {
+            Trainingsplan trainingsplan = optionalPlan.get();
+            trainingsplan.setName(name);
+            trainingsplan.setDescription(description);
+            trainingsplan.setGoal(goal);
+            trainingsplan.setTrainingDays(trainingDays);
 
-    public void deleteTrainingsplan(Long id) {
-        trainingsplanRepository.deleteById(id);
-    }
+            List<Exercise> resolvedExercises = selectedExercises.values().stream()
+                    .map(exerciseId -> exerciseRepository.findById(Long.valueOf(exerciseId))
+                            .orElseThrow(() -> new IllegalArgumentException("Ungültige Übungs-ID: " + exerciseId)))
+                    .collect(Collectors.toList());
 
-    public void addExerciseToTrainingsplan(Long trainingsplanId, Exercise exercise) {
-        Trainingsplan trainingsplan = trainingsplanRepository.getTrainingsplanById(trainingsplanId);
-        if (trainingsplan != null) {
-            trainingsplan.addExercise(exercise);
-            trainingsplanRepository.updateTrainingsplan(trainingsplan);
-        } else {
-            System.out.println("Trainingsplan mit ID " + trainingsplanId + " wurde nicht gefunden.");
+            trainingsplan.setExercises(resolvedExercises);
+            return trainingsplanRepository.save(trainingsplan);
         }
+        return null;
     }
 
-    public void removeExerciseFromTrainingsplan(Long trainingsplanId, Exercise exercise) {
-        Trainingsplan trainingsplan = trainingsplanRepository.getTrainingsplanById(trainingsplanId);
-        if (trainingsplan != null) {
-            trainingsplan.removeExercise(exercise);
-            trainingsplanRepository.updateTrainingsplan(trainingsplan);
-        } else {
-            System.out.println("Trainingsplan mit ID " + trainingsplanId + " wurde nicht gefunden.");
+    public boolean deleteTrainingsplan(Long id) {
+        if (trainingsplanRepository.existsById(id)) {
+            trainingsplanRepository.deleteById(id);
+            return true;
         }
-    }
-
-    public void updateTrainingsplanDuration(Long trainingsplanId, Duration newDuration) {
-        /*Trainingsplan trainingsplan = trainingsplanRepository.getTrainingsplanById(trainingsplanId);
-        if (trainingsplan != null) {
-            trainingsplan.setDuration(newDuration);
-            trainingsplanRepository.updateTrainingsplan(trainingsplan);
-        } else {
-            System.out.println("Trainingsplan mit ID " + trainingsplanId + " wurde nicht gefunden.");
-        }*/
-    }
-
-    public void updateTrainingsplanGoal(Long trainingsplanId, String newGoal) {
-        Trainingsplan trainingsplan = trainingsplanRepository.getTrainingsplanById(trainingsplanId);
-        if (trainingsplan != null) {
-            trainingsplan.updateGoal(newGoal);
-            trainingsplanRepository.updateTrainingsplan(trainingsplan);
-        } else {
-            System.out.println("Trainingsplan mit ID " + trainingsplanId + " wurde nicht gefunden.");
-        }
+        return false;
     }
 }

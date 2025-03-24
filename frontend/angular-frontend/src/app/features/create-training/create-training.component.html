@@ -50,7 +50,7 @@
             <div class="selected-excercises">
               <label for="exercise-{{i}}">Übungen:</label>
               <select [(ngModel)]="day.selectedExercise" id="exercise-{{i}}">
-                <option *ngFor="let exercise of availableExercises" [value]="exercise">{{ exercise }}</option>
+                <option *ngFor="let exercise of availableExercises" [ngValue]="exercise">{{ exercise.name }}</option>
               </select>
             </div>
           </div>

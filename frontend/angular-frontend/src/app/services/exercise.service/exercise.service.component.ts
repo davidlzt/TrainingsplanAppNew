@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs'; // 'of' für Dummy-Daten
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Exercise } from '../../features/exercises/exercises.component';
 

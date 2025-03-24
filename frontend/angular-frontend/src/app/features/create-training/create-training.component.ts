@@ -3,11 +3,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgIf, NgForOf, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {MenuButtonComponent} from '../../shared/menu-button/menu-button.component';
+import {HttpClient} from '@angular/common/http';
+import {TrainingsplanService} from '../../services/trainingsplan.service/trainingsplan.service.component';
+import {Exercise} from '../exercises/exercises.component';
+import {ExerciseService} from '../../services/exercise.service/exercise.service.component';
 
 interface TrainingDay {
   isRest: boolean;
   selectedExercises: { [exercise: string]: boolean };
-  selectedExercise?: string; // Hinzugefügt für das Dropdown
+  selectedExercise?: Exercise;
 }
 
 @Component({
@@ -22,16 +26,19 @@ export class CreateTrainingComponent implements OnInit {
   trainingName: string = '';
   selectedTrainingDays: number | null = null;
   trainingWeek: TrainingDay[] = [];
-  availableExercises: string[] = ['Benchpress', 'Bizepscurls', 'Kniebeugen', 'Klimmzüge', 'Schulterdrücken'];
+  availableExercises: Exercise[] = [];
   availableMuscleGroups: string[] = ['Brust', 'Rücken', 'Schulter', 'Arme', 'Beine', 'Bauch'];
   dayNames: string[] = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient,
+  private trainingsplanService: TrainingsplanService,
+  private exerciseService: ExerciseService){}
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       this.trainingName = params['name'] || 'Dein Training';
     });
+    this.loadAvailableExercises();
   }
 
   setTrainingDays(days: number) {
@@ -52,17 +59,14 @@ export class CreateTrainingComponent implements OnInit {
 
   previousStep() {
     if (this.step === 2) {
-      this.step = 1;  // Gehe zurück zu Step 1
+      this.step = 1;
     } else if (this.step === 3) {
-      this.step = 2;  // Gehe zurück zu Step 2
+      this.step = 2;
     }
   }
 
   generateTrainingWeek(trainingDays: number): TrainingDay[] {
-    let week: TrainingDay[] = Array(7).fill(null).map(() => ({
-      isRest: true,
-      selectedExercises: {}
-    }));
+    let week: TrainingDay[] = Array(7).fill(null).map(() => ({ isRest: true, selectedExercises: {} }));
 
     let trainingDaysAssigned = 0;
     let dayIndex = 0;
@@ -78,6 +82,43 @@ export class CreateTrainingComponent implements OnInit {
     return week;
   }
 
+
+  saveTraining() {
+    const trainingDays: number[] = this.trainingWeek
+      .map((day, index) => (!day.isRest ? index : -1))
+      .filter(index => index !== -1);
+
+    const selectedExercises: { [key: number]: string } = {};
+    this.trainingWeek.forEach((day, index) => {
+      if (!day.isRest && day.selectedExercise) {
+        selectedExercises[index] = day.selectedExercise.id;
+      }
+    });
+
+    const trainingPlanData = {
+      name: this.trainingName,
+      description: 'Automatisch generierter Trainingsplan',
+      goal: 'Muskelaufbau',
+      trainingDays,
+      selectedExercises
+    };
+
+    console.log('Gespeicherter Trainingsplan:', trainingPlanData);
+
+    this.trainingsplanService.saveTrainingPlan(trainingPlanData).subscribe({
+      next: response => {
+        console.log('Training gespeichert!', response);
+        this.router.navigate(['/dashboard']);
+      },
+      error: err => {
+        console.error('🚨 Fehler beim Speichern des Trainings:', err);
+        if (err.error) {
+          console.error('👉 Server-Fehlermeldung:', err.error);
+        }
+      },
+    });
+  }
+
   isExerciseSelected(): boolean {
     return this.trainingWeek.some(day =>
       !day.isRest && Object.values(day.selectedExercises).some(val => val)
@@ -90,8 +131,15 @@ export class CreateTrainingComponent implements OnInit {
       .join(', ') || 'Keine Übung gewählt';
   }
 
-  saveTraining() {
-    console.log('Training gespeichert:', this.trainingWeek);
-    this.router.navigate(['/dashboard']);
+  loadAvailableExercises() {
+    this.exerciseService.getExercises().subscribe({
+      next: exercises => {
+        this.availableExercises = exercises;
+        console.log('Verfügbare Übungen geladen:', this.availableExercises);
+      },
+      error: err => {
+        console.error('Fehler beim Laden der Übungen:', err);
+      },
+    });
   }
 }
