@@ -21,4 +21,14 @@ export class TrainingsplanService {
   saveTrainingPlan(trainingPlanData: TrainingPlan): Observable<any> {
     return this.http.post(this.apiUrl, trainingPlanData);
   }
+  getAllTrainingPlans(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
+  }
+  getTrainingFrequency(trainingsplanId: number): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/${trainingsplanId}/training-frequency`);
+  }
+
+  getExercisesForPlan(trainingsplanId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${trainingsplanId}/exercises`);
+  }
 }

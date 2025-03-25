@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import restcontroller.util.ExerciseDTO;
 import restcontroller.util.MusclesAndDevicesRequest;
 import services.ExerciseService;
 
@@ -19,9 +20,11 @@ public class ExerciseController {
     @Autowired
     private ExerciseService exerciseService;
 
-    @GetMapping
-    public List<Exercise> getAllExercises() {
-        return exerciseService.getAllExercises();
+    @GetMapping(produces = "application/json")
+    public List<ExerciseDTO> getAllExercises() {
+        return exerciseService.getAllExercises().stream()
+                .map(exercise -> new ExerciseDTO(exercise.getId(), exercise.getName(), exercise.getDescription()))
+                .toList();
     }
 
     @GetMapping("/{id}")

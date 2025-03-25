@@ -1,5 +1,6 @@
 package entitys;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,7 @@ public class Exercise {
     private Integer version;
 
     @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Muscle> targetMuscles;
 
     @OneToMany
@@ -32,7 +34,9 @@ public class Exercise {
             joinColumns = @JoinColumn(name = "exercise_id"),
             inverseJoinColumns = @JoinColumn(name = "device_id")
     )
+    @JsonIgnore
     private List<Device> devices;
+
 
     public Exercise() {
     }

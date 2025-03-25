@@ -17,48 +17,53 @@
   </div>
 
   <div *ngIf="step === 2" class="step-container">
-    <h3>Training für: {{ trainingName }}</h3>
+    <h3>Wähle die Tage, an denen du trainieren möchtest ({{ selectedTrainingDays }} Tage)</h3>
+    <div class="day-selection">
+      <button *ngFor="let day of [0, 1, 2, 3, 4, 5, 6]; let i = index"
+              (click)="toggleTrainingDay(i)"
+              [ngClass]="{'selected': selectedTrainingDaysList.includes(i)}"
+              [disabled]="selectedTrainingDaysList.length >= selectedTrainingDays && !selectedTrainingDaysList.includes(i)">
+        {{ dayNames[i] }}
+      </button>
+    </div>
+    <button class="btn next-btn" [disabled]="selectedTrainingDaysList.length !== selectedTrainingDays" (click)="nextStep()">Weiter</button>
+  </div>
 
-    <div class="week-schedule">
-      <div *ngFor="let day of trainingWeek; let i = index" class="day-box" [ngClass]="{'rest-day': day.isRest}">
-        <span class="day-label">{{ dayNames[i] }}</span>
-
-        <span *ngIf="day.isRest" class="rest-label">Ruhetag</span>
-
-        <div *ngIf="!day.isRest">
-          <div *ngFor="let exercise of availableMuscleGroups">
-            <input type="checkbox" [(ngModel)]="day.selectedExercises[exercise]" /> {{ exercise }}
+  <div *ngIf="step === 3" class="step-container">
+    <h3>Wähle Muskelgruppen für jeden Trainingstag</h3>
+    <div class="day-box-wrapper">
+      <div *ngFor="let day of selectedTrainingDaysList">
+        <div class="day-box">
+          <h4>{{ dayNames[day] }}</h4>
+          <div *ngFor="let muscle of availableMuscleGroups">
+            <input type="checkbox" [(ngModel)]="selectedMuscleGroups[day][muscle]" /> {{ muscle }}
           </div>
         </div>
       </div>
     </div>
-
-    <div class="btn-container">
-      <button class="btn back-btn" (click)="previousStep()">Zurück</button>
-      <button class="btn next-btn" (click)="onToStep3()" [disabled]="!isExerciseSelected()">Weiter</button>
-    </div>
+    <button class="btn next-btn" (click)="nextStep()">Weiter</button>
   </div>
 
-  <div *ngIf="step === 3" class="step-container">
-    <h3>Übersicht</h3>
-    <div class="week-schedule">
-      <div *ngFor="let day of trainingWeek; let i = index">
-        <ng-container *ngIf="!day.isRest">
-          <div class="day-box">
-            <h4>{{ dayNames[i] }}</h4>
-            <h5>{{ getSelectedExercises(day)}}</h5>
-            <div class="selected-excercises">
-              <label for="exercise-{{i}}">Übungen:</label>
-              <select [(ngModel)]="day.selectedExercise" id="exercise-{{i}}">
-                <option *ngFor="let exercise of availableExercises" [ngValue]="exercise">{{ exercise.name }}</option>
-              </select>
+  <div *ngIf="step === 4" class="step-container">
+    <h3>Wähle Übungen für die ausgewählten Muskelgruppen</h3>
+    <div class="day-box-wrapper">
+      <div *ngFor="let day of selectedTrainingDaysList">
+        <div class="day-box">
+          <h4>{{ dayNames[day] }}</h4>
+          <div *ngFor="let muscle of availableMuscleGroups">
+            <div *ngIf="selectedMuscleGroups[day][muscle]">
+              <label>{{ muscle }}</label>
+              <div *ngFor="let exercise of availableExercises">
+                <input type="checkbox"
+                       [(ngModel)]="selectedExercises[day][muscle][exercise.id]"
+                       [value]="exercise.id" /> {{ exercise.name }}
+              </div>
             </div>
           </div>
-        </ng-container>
+        </div>
       </div>
-
     </div>
-
-    <button class="save-btn" (click)="saveTraining()">Training speichern</button>
+    <button class="btn save-btn" (click)="saveTraining()">Training speichern</button>
   </div>
+
 </div>

@@ -1,29 +1,24 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import { NgClass, NgForOf, NgIf } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
-import {FormsModule} from '@angular/forms';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import {TrainingsplanService} from '../../services/trainingsplan.service/trainingsplan.service.component';
+import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {MenuButtonComponent} from '../../shared/menu-button/menu-button.component';
-
+import {FormsModule} from '@angular/forms';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   standalone: true,
   imports: [
     NgClass,
-    RouterLink,
     NgForOf,
+    MenuButtonComponent,
     NgIf,
-    HttpClientModule,
-    RouterLink,
-    RouterOutlet,
-    RouterLinkActive,
-    FormsModule,
-    MenuButtonComponent
+    FormsModule
   ],
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, AfterViewInit{
+export class DashboardComponent implements OnInit, AfterViewInit {
   currentMonth: string | undefined;
   currentYear: number | undefined;
   daysInMonth: any[] = [];
@@ -33,8 +28,17 @@ export class DashboardComponent implements OnInit, AfterViewInit{
   averageTrainingTime: number = 60;
   trainingName: string = '';
   trainingDescription: string = '';
+  trainingPlans: any[] = [];
+  daysOfWeek: string[] = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
+  trainingFrequency: number = 0;
+  exercises: any[] = [];
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private trainingsplanService: TrainingsplanService,
+    private http: HttpClient,
+  ) {}
 
   ngOnInit() {
     setTimeout(() => {
@@ -42,6 +46,9 @@ export class DashboardComponent implements OnInit, AfterViewInit{
       this.currentMonth = new Date().toLocaleString('default', { month: 'long' });
       this.generateCalendar();
       this.cdr.detectChanges();
+      this.fetchTrainingPlans();
+      const trainingsplanId = 1;
+      this.loadTrainingDetails(trainingsplanId);
     });
   }
 
@@ -50,9 +57,22 @@ export class DashboardComponent implements OnInit, AfterViewInit{
     this.cdr.detectChanges();
   }
 
+  fetchTrainingPlans(): void {
+    this.trainingsplanService.getAllTrainingPlans().subscribe(
+      (data) => {
+        console.log('Trainingspläne erhalten:', data);
+        this.trainingPlans = data;
+      },
+      (error) => {
+        console.error('Fehler beim Abrufen der Trainingspläne:', error);
+      }
+    );
+  }
+  formatTrainingDays(trainingDays: number[]): string {
+    return trainingDays.map(day => this.daysOfWeek[day]).join(', ');
+  }
 
-
-createTraining() {
+  createTraining() {
     this.router.navigate(['/create-training'], {
       queryParams: {
         name: this.trainingName,
@@ -97,14 +117,16 @@ createTraining() {
     this.daysInMonth = days.slice(0, 28);
   }
 
-
   dayHasTraining(day: any) {
     return day.trainings.length > 0;
   }
+  loadTrainingDetails(trainingsplanId: number) {
+    this.trainingsplanService.getTrainingFrequency(trainingsplanId).subscribe((frequency: number) => {
+      this.trainingFrequency = frequency;
+    });
 
-  menuVisible = false;
-
-  toggleMenu(visible: boolean) {
-    this.menuVisible = visible;
+    this.trainingsplanService.getExercisesForPlan(trainingsplanId).subscribe((exercises: any[]) => {
+      this.exercises = exercises;
+    });
   }
 }

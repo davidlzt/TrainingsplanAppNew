@@ -2,15 +2,13 @@
   <h2>Benutzerauswahl</h2>
   <app-menu-button></app-menu-button>
 
-  <!-- Liste der Benutzer -->
   <div class="user-list">
     <div *ngFor="let user of users" class="user-item">
       <div class="user-header" (click)="toggleDropdown(user.id)">
         <span>{{ user.username }}</span>
-        <span class="dropdown-icon">&#9660;</span> <!-- Pfeilsymbol -->
+        <span class="dropdown-icon">&#9660;</span>
       </div>
 
-      <!-- Details des ausgewählten Benutzers anzeigen -->
       <div *ngIf="user.id === selectedUserId" class="user-details">
         <form #accountForm="ngForm">
           <div class="account-info">

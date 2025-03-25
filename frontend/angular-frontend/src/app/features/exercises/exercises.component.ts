@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ExerciseService } from '../../services/exercise.service/exercise.service.component';
 import { MenuButtonComponent } from '../../shared/menu-button/menu-button.component';
-import { NgForOf } from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 
 export interface Exercise {
   id: string;
@@ -16,7 +16,8 @@ export interface Exercise {
   standalone: true,
   imports: [
     MenuButtonComponent,
-    NgForOf
+    NgForOf,
+    NgIf
   ],
   styleUrls: ['./exercises.component.scss']
 })
@@ -33,7 +34,12 @@ export class ExercisesComponent implements OnInit {
   loadExercises() {
     this.exerciseService.getExercises().subscribe({
       next: (data) => {
-        this.exercises = data;
+        try {
+          this.exercises = Array.isArray(data) ? data : [];
+        } catch (e) {
+          console.error('Fehler beim Parsen der Übungen:', e);
+          this.exercises = [];
+        }
       },
       error: (err) => {
         console.error('Fehler beim Laden der Übungen:', err);

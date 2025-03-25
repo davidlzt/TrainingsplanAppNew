@@ -2,79 +2,72 @@ package restcontroller;
 
 import entitys.Trainingsplan;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import restcontroller.util.TrainingsplanDTO;
-import services.TrainingsplanApplicationService;
-import java.util.Map;
-
-import java.util.List;
+import services.TrainingsplanService;
+import entitys.Exercise;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @RestController
-@RequestMapping("api/trainingsplan")
-@CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS})
+@RequestMapping("/api/trainingsplan")
 public class TrainingsplanController {
 
-    @Autowired
-    private TrainingsplanApplicationService trainingsplanService;
+    private final TrainingsplanService trainingsplanService;
 
+    @Autowired
+    public TrainingsplanController(TrainingsplanService trainingsplanService) {
+        this.trainingsplanService = trainingsplanService;
+    }
     @GetMapping
-    public List<Trainingsplan> getAllTrainingsplaene() {
-        return trainingsplanService.getAllTrainingsplaene();
+    public List<Trainingsplan> getAllTrainingPlans() {
+        List<Trainingsplan> plans = trainingsplanService.getAllTrainingPlans();
+        System.out.println("Trainingspläne aus der Datenbank: " + plans);
+        return plans;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Trainingsplan> getTrainingsplanById(@PathVariable Long id) {
-        Optional<Trainingsplan> trainingsplan = Optional.ofNullable(trainingsplanService.getTrainingsplanById(id));
-        return trainingsplan.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<Trainingsplan> getTrainingsplan(@PathVariable Long id) {
+        Optional<Trainingsplan> trainingsplan = trainingsplanService.getTrainingsplanWithExercises(id);
+
+        return trainingsplan.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<?> createTrainingsplan(@RequestBody TrainingsplanDTO trainingsplanDTO) {
-        try {
-            System.out.println("Empfangenes TrainingsplanDTO-Objekt: " + trainingsplanDTO);
-
-            Map<Integer, Integer> selectedExercises = trainingsplanDTO.getSelectedExercises().entrySet().stream()
-                    .collect(Collectors.toMap(
-                            entry -> Integer.parseInt(entry.getKey()),
-                            Map.Entry::getValue
-                    ));
-
-            System.out.println("Konvertierte Übungen: " + selectedExercises);
-
-            Trainingsplan newPlan = trainingsplanService.createTrainingsplanFromDTO(trainingsplanDTO, selectedExercises);
-
-            return ResponseEntity.ok(newPlan);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Fehler beim Erstellen des Trainingsplans: " + e.getMessage());
-        }
+    public ResponseEntity<Trainingsplan> createTrainingsplan(@RequestBody Trainingsplan trainingsplan) {
+        Trainingsplan savedPlan = trainingsplanService.createTrainingsplan(trainingsplan);
+        return ResponseEntity.ok(savedPlan);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Trainingsplan> updateTrainingsplan(@PathVariable Long id, @RequestBody TrainingsplanDTO dto) {
-        Trainingsplan updatedTrainingsplan = trainingsplanService.updateTrainingsplan(id, dto, dto.getSelectedExercises());
-        if (updatedTrainingsplan != null) {
-            return new ResponseEntity<>(updatedTrainingsplan, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Void> updateTrainingsplan(@PathVariable Long id,
+                                                    @RequestBody Trainingsplan trainingsplan) {
+        trainingsplanService.updateTrainingsplan(id,
+                trainingsplan.getName(),
+                trainingsplan.getDescription(),
+                trainingsplan.getGoal(),
+                trainingsplan.getTrainingDays());
+        return ResponseEntity.noContent().build();
     }
-
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTrainingsplan(@PathVariable Long id) {
-        boolean deleted = trainingsplanService.deleteTrainingsplan(id);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        trainingsplanService.deleteTrainingsplan(id);
+        return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}/exercises")
+    public List<Exercise> getExercisesForTrainingsplan(@PathVariable Long id) {
+        List<Exercise> exercises = trainingsplanService.getExercisesForTrainingsplan(id);
+        System.out.println("Trainingspläne aus der Datenbank: " + exercises);
+        return exercises;
+    }
+
+    @GetMapping("/{id}/training-frequency")
+    public int getTrainingFrequencyForTrainingsplan(@PathVariable Long id) {
+        int days = trainingsplanService.getTrainingFrequencyForTrainingsplan(id);
+        System.out.println("Trainingsplan aus der Datenbank: " + days);
+        return days;
+    }
+
 }
