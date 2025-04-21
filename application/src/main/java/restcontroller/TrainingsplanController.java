@@ -35,6 +35,7 @@ public class TrainingsplanController {
 
     @PostMapping
     public ResponseEntity<Trainingsplan> createTrainingsplan(@RequestBody Trainingsplan trainingsplan) {
+        System.out.println("Empfangene Daten: " + trainingsplan);
         Trainingsplan savedPlan = trainingsplanService.createTrainingsplan(trainingsplan);
         return ResponseEntity.ok(savedPlan);
     }

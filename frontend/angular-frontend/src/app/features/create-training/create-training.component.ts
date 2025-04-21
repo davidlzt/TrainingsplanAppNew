@@ -5,11 +5,16 @@ import { Exercise } from '../exercises/exercises.component';
 import { FormsModule } from '@angular/forms';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { MenuButtonComponent } from '../../shared/menu-button/menu-button.component';
+import {TrainingsplanService} from '../../services/trainingsplan.service/trainingsplan.service.component';
 
-interface TrainingDay {
-  isRest: boolean;
-  selectedExercises: { [exercise: string]: boolean };
+interface TrainingPlan {
+  name: string;
+  description: string;
+  goal: string;
+  trainingDays: number[];
+  selectedExercises: { [key: number]: string }
 }
+
 
 @Component({
   selector: 'app-create-training',
@@ -32,18 +37,28 @@ export class CreateTrainingComponent implements OnInit {
   availableMuscleGroups: string[] = ['Brust', 'Rücken', 'Schulter', 'Arme', 'Beine', 'Bauch'];
   dayNames: string[] = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
   selectedExercises: { [day: number]: { [muscle: string]: { [exerciseId: string]: boolean } } } = {};
-  selectedMuscleGroups: { [day: number]: { [muscle: string]: boolean } } = {};
 
-  constructor(private exerciseService: ExerciseService, private router: Router) {}
+  selectedMuscleGroups: { [day: number]: { [muscle: string]: boolean } } = {};
+  trainingName: string = '';
+  trainingDescription: string = '';
+
+  constructor(private exerciseService: ExerciseService, private router: Router, private trainingplanService: TrainingsplanService) {}
 
   ngOnInit() {
     this.loadAvailableExercises();
+
+    this.selectedTrainingDaysList.forEach(day => {
+      this.selectedExercises[day] = this.selectedExercises[day] || {};
+
+      this.availableMuscleGroups.forEach(muscle => {
+        this.selectedExercises[day][muscle] = {};
+      });
+    });
   }
 
   setTrainingDays(days: number) {
     this.selectedTrainingDays = days;
     this.selectedTrainingDaysList = [];
-    this.step = 2;
   }
 
   toggleTrainingDay(dayIndex: number) {
@@ -57,35 +72,46 @@ export class CreateTrainingComponent implements OnInit {
   }
 
   nextStep() {
+    if (this.step === 1) {
+      if (!this.trainingName || !this.trainingDescription || !this.selectedTrainingDays) {
+        alert("Bitte gib einen Trainingsnamen, eine Beschreibung und die Anzahl der Trainingstage an.");
+        return;
+      }
+    }
+
     if (this.step === 2) {
       this.selectedTrainingDaysList.forEach(day => {
-        this.selectedMuscleGroups[day] = this.availableMuscleGroups.reduce((acc, muscle) => {
-          acc[muscle] = false;
-          return acc;
-        }, {} as { [muscle: string]: boolean });
+        if (!this.selectedMuscleGroups[day]) {
+          this.selectedMuscleGroups[day] = this.availableMuscleGroups.reduce((acc, muscle) => {
+            acc[muscle] = false;
+            return acc;
+          }, {} as { [muscle: string]: boolean });
+        }
 
-        this.selectedExercises[day] = this.availableMuscleGroups.reduce((acc, muscle) => {
-          acc[muscle] = this.availableExercises.reduce((exerciseAcc, exercise) => {
-            exerciseAcc[exercise.id] = false;
-            return exerciseAcc;
-          }, {} as { [exerciseId: string]: boolean });
-          return acc;
-        }, {} as { [muscle: string]: { [exerciseId: string]: boolean } });
+        if (!this.selectedExercises[day]) {
+          this.selectedExercises[day] = this.availableMuscleGroups.reduce((acc, muscle) => {
+            acc[muscle] = {};
+            return acc;
+          }, {} as { [muscle: string]: { [exerciseId: string]: boolean } });
+        }
       });
+    }
 
-      if (this.availableExercises.length === 0) {
-        this.loadAvailableExercises().then(() => {
-          this.step = 3;
-        });
-      } else {
-        this.step = 3;
-      }
-    } else if (this.step === 3) {
+    if (this.step === 3) {
       this.step = 4;
+    } else {
+      this.step++;
     }
   }
 
-
+  areMuscleGroupsSelected(): boolean {
+    for (let day of this.selectedTrainingDaysList) {
+      if (!this.selectedMuscleGroups[day] || !Object.values(this.selectedMuscleGroups[day]).includes(true)) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   loadAvailableExercises(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -104,14 +130,41 @@ export class CreateTrainingComponent implements OnInit {
   }
 
   saveTraining() {
-    const trainingPlanData = {
-      selectedTrainingDays: this.selectedTrainingDaysList,
-      selectedMuscleGroups: this.selectedMuscleGroups,
-      selectedExercises: this.selectedExercises
+    const exercisesToSave: { [key: number]: string } = {};
+
+    for (const [day, muscles] of Object.entries(this.selectedExercises)) {
+      let exercisesForDay: string[] = [];
+
+      for (const [muscle, exercises] of Object.entries(muscles)) {
+        for (const [exerciseId, selected] of Object.entries(exercises)) {
+          if (selected) {
+            exercisesForDay.push(exerciseId);
+          }
+        }
+      }
+
+      exercisesToSave[+day] = exercisesForDay.join(',');
+    }
+
+    const trainingPlanData: TrainingPlan = {
+      name: this.trainingName,
+      description: this.trainingDescription,
+      goal: "Muskelaufbau",
+      trainingDays: this.selectedTrainingDaysList,
+      selectedExercises: exercisesToSave,
     };
 
-    console.log('Training gespeichert:', trainingPlanData);
-    console.log(this.selectedExercises);
-    this.router.navigate(['/dashboard']);
+    console.log('Training speichern:', trainingPlanData);
+
+    this.trainingplanService.saveTrainingPlan(trainingPlanData).subscribe({
+      next: (response) => {
+        console.log('Trainingsplan erfolgreich gespeichert:', response);
+        this.router.navigate(['/dashboard']);
+      },
+      error: (error) => {
+        console.error('Fehler beim Speichern des Trainingsplans:', error);
+      },
+    });
   }
+
 }

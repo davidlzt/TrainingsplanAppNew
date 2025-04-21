@@ -42,8 +42,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     setTimeout(() => {
-      this.currentYear = new Date().getFullYear();
-      this.currentMonth = new Date().toLocaleString('default', { month: 'long' });
+      const currentDate = new Date();
+      this.currentYear = currentDate.getFullYear();
+      this.currentMonth = currentDate.toLocaleString('default', { month: 'long' });
       this.generateCalendar();
       this.cdr.detectChanges();
       this.fetchTrainingPlans();
@@ -83,43 +84,41 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   generateCalendar() {
     const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const firstDayOfWeek = firstDayOfMonth.getDay();
+
+    const startDay = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
 
     let days: any[] = [];
 
-    days.push({
-      date: yesterday.getDate(),
-      month: yesterday.toLocaleString('default', { month: 'long' }),
-      trainings: this.dummyTrainings.filter(t => t.date === yesterday.getDate()),
-      isToday: false
-    });
-
-    days.push({
-      date: today.getDate(),
-      month: today.toLocaleString('default', { month: 'long' }),
-      trainings: this.dummyTrainings.filter(t => t.date === today.getDate()),
-      isToday: true
-    });
+    for (let i = 0; i < startDay; i++) {
+      days.push({ date: '', month: '', isToday: false });
+    }
 
     for (let i = 1; i <= 30; i++) {
-      let futureDate = new Date(today);
-      futureDate.setDate(today.getDate() + i);
-
+      const day = new Date(today.getFullYear(), today.getMonth(), i);
       days.push({
-        date: futureDate.getDate(),
-        month: futureDate.toLocaleString('default', { month: 'long' }),
-        trainings: this.dummyTrainings.filter(t => t.date === futureDate.getDate()),
-        isToday: false
+        date: day.getDate(),
+        month: today.toLocaleString('default', { month: 'long' }),
+        isToday: day.toDateString() === new Date().toDateString()
       });
     }
 
-    this.daysInMonth = days.slice(0, 28);
+    this.daysInMonth = days;
   }
 
-  dayHasTraining(day: any) {
-    return day.trainings.length > 0;
+
+  dayHasTraining(day: any): boolean {
+    if (this.currentYear === undefined) return false;
+
+    const currentDayOfWeek = new Date(this.currentYear, new Date().getMonth(), day.date).getDay();
+
+    const rotatedDayOfWeek = (currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1); 
+
+    return this.trainingPlans.some(plan => plan.trainingDays.includes(rotatedDayOfWeek));
   }
+
+
   loadTrainingDetails(trainingsplanId: number) {
     this.trainingsplanService.getTrainingFrequency(trainingsplanId).subscribe((frequency: number) => {
       this.trainingFrequency = frequency;
@@ -129,4 +128,34 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.exercises = exercises;
     });
   }
+
+  isTrainingDay(dayDate: number | undefined, trainingDays: number[]): boolean {
+    if (typeof dayDate !== 'number' || isNaN(dayDate)) {
+      dayDate = 0;
+    }
+
+    let dayOfWeek: number;
+    if (typeof this.currentYear === "number") {
+      const day = new Date(this.currentYear, new Date().getMonth(), dayDate);
+      dayOfWeek = day.getDay();
+    } else {
+      dayOfWeek = 0;
+    }
+
+    const rotatedDayOfWeek = (dayOfWeek === 0 ? 6 : dayOfWeek - 1);
+
+    return trainingDays.includes(rotatedDayOfWeek);
+  }
+
+
+  getRotatedWeekDays(): string[] {
+    const today = new Date();
+    const todayIndex = today.getDay();
+    const orderedDays = [...this.daysOfWeek];
+    const dayIndexInCustomOrder = (todayIndex === 0 ? 6 : todayIndex - 1);
+    const rotated = [...orderedDays.slice(dayIndexInCustomOrder), ...orderedDays.slice(0, dayIndexInCustomOrder)];
+
+    return rotated;
+  }
+
 }

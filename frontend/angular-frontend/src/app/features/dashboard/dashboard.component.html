@@ -7,19 +7,19 @@
 
     <div class="calendar-box">
       <div class="calendar-grid">
-        <div class="calendar-cell week-header">Mo</div>
-        <div class="calendar-cell week-header">Di</div>
-        <div class="calendar-cell week-header">Mi</div>
-        <div class="calendar-cell week-header">Do</div>
-        <div class="calendar-cell week-header">Fr</div>
-        <div class="calendar-cell week-header">Sa</div>
-        <div class="calendar-cell week-header">So</div>
+        <div *ngFor="let weekday of getRotatedWeekDays()" class="calendar-cell week-header">
+          {{ weekday.slice(0, 2) }}
+        </div>
 
         <div *ngFor="let day of daysInMonth" class="calendar-cell"
              [ngClass]="{'has-training': dayHasTraining(day), 'highlight-today': day.isToday}">
           <span class="calendar-date">{{ day.date }} {{ day.month }}</span>
           <div *ngIf="dayHasTraining(day)" class="training-details">
-            <div *ngFor="let training of day.trainings">{{ training.details }}</div>
+            <div *ngFor="let plan of trainingPlans">
+              <div *ngIf="isTrainingDay(day.date ?? 0, plan.trainingDays)">
+                {{ plan.name }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -30,12 +30,6 @@
     <div class="box plan-box">
       <h3>Trainingsplan erstellen</h3>
       <form>
-        <label for="training-name">Trainingsname</label>
-        <input type="text" id="training-name" placeholder="Name des Trainings" [(ngModel)]="trainingName" [ngModelOptions]="{standalone: true}">
-
-        <label for="training-description">Beschreibung</label>
-        <textarea id="training-description" placeholder="Beschreibung des Trainings" [(ngModel)]="trainingDescription" [ngModelOptions]="{standalone: true}"></textarea>
-
         <button type="submit" class="btn" (click)="createTraining()">Trainingsplan erstellen</button>
       </form>
     </div>

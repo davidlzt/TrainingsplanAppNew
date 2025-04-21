@@ -5,6 +5,12 @@
   </div>
 
   <div *ngIf="step === 1" class="step-container">
+    <label for="training-name">Trainingsname</label>
+    <input type="text" id="training-name" placeholder="Name des Trainings" [(ngModel)]="trainingName" [ngModelOptions]="{standalone: true}">
+
+    <label for="training-description">Beschreibung</label>
+    <textarea id="training-description" placeholder="Beschreibung des Trainings" [(ngModel)]="trainingDescription" [ngModelOptions]="{standalone: true}"></textarea>
+
     <h3>Wie oft möchtest du pro Woche trainieren?</h3>
     <div class="day-selection">
       <button *ngFor="let day of [1, 2, 3, 4, 5, 6, 7]"
@@ -13,7 +19,7 @@
         {{ day }}x pro Woche
       </button>
     </div>
-    <button class="btn next-btn" [disabled]="!selectedTrainingDays" (click)="nextStep()">Weiter</button>
+    <button class="btn next-btn" [disabled]="!trainingName || !trainingDescription || !selectedTrainingDays" (click)="nextStep()">Weiter</button>
   </div>
 
   <div *ngIf="step === 2" class="step-container">
@@ -41,8 +47,9 @@
         </div>
       </div>
     </div>
-    <button class="btn next-btn" (click)="nextStep()">Weiter</button>
+    <button class="btn next-btn" [disabled]="!areMuscleGroupsSelected()" (click)="nextStep()">Weiter</button>
   </div>
+
 
   <div *ngIf="step === 4" class="step-container">
     <h3>Wähle Übungen für die ausgewählten Muskelgruppen</h3>
@@ -65,5 +72,4 @@
     </div>
     <button class="btn save-btn" (click)="saveTraining()">Training speichern</button>
   </div>
-
 </div>
