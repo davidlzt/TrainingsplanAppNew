@@ -31,4 +31,8 @@ export class TrainingsplanService {
   getExercisesForPlan(trainingsplanId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/${trainingsplanId}/exercises`);
   }
+  deleteTrainingPlan(planId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${planId}`);
+  }
+
 }

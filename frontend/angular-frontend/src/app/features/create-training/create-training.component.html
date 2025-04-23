@@ -42,7 +42,8 @@
         <div class="day-box">
           <h4>{{ dayNames[day] }}</h4>
           <div *ngFor="let muscle of availableMuscleGroups">
-            <input type="checkbox" [(ngModel)]="selectedMuscleGroups[day][muscle]" /> {{ muscle }}
+            {{ muscle }}
+            <input type="checkbox" [(ngModel)]="selectedMuscleGroups[day][muscle]" />
           </div>
         </div>
       </div>
@@ -61,9 +62,10 @@
             <div *ngIf="selectedMuscleGroups[day][muscle]">
               <label>{{ muscle }}</label>
               <div *ngFor="let exercise of availableExercises">
+                {{ exercise.name }}
                 <input type="checkbox"
                        [(ngModel)]="selectedExercises[day][muscle][exercise.id]"
-                       [value]="exercise.id" /> {{ exercise.name }}
+                       [value]="exercise.id" />
               </div>
             </div>
           </div>

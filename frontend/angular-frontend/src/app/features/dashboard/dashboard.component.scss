@@ -204,4 +204,51 @@ button[type="submit"]:hover {
   font-size: 0.9rem;
   color: #ccc;
 }
+.delete-button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+
+  &:hover {
+    background-color: #c0392b;
+  }
+}
+.box-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-top: 20px;
+
+  .box {
+    flex: 1;
+  }
+
+  .flappy-box {
+    width: 320px;
+    max-width: 100%;
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+
+    .game-canvas {
+      border: 2px solid #000;
+      display: block;
+      margin: 10px auto;
+    }
+
+    .start-button {
+      margin-bottom: 10px;
+    }
+
+    .score-display {
+      font-weight: bold;
+    }
+  }
+}
 

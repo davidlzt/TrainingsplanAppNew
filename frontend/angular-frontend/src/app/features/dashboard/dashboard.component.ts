@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import {TrainingsplanService} from '../../services/trainingsplan.service/trainingsplan.service.component';
@@ -22,7 +22,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   currentMonth: string | undefined;
   currentYear: number | undefined;
   daysInMonth: any[] = [];
-  dummyTrainings: any[] = [];
   trainingCount: number = 5;
   lastTrainingDate: string = '2025-02-18';
   averageTrainingTime: number = 60;
@@ -113,7 +112,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     const currentDayOfWeek = new Date(this.currentYear, new Date().getMonth(), day.date).getDay();
 
-    const rotatedDayOfWeek = (currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1); 
+    const rotatedDayOfWeek = (currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1);
 
     return this.trainingPlans.some(plan => plan.trainingDays.includes(rotatedDayOfWeek));
   }
@@ -156,6 +155,123 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     const rotated = [...orderedDays.slice(dayIndexInCustomOrder), ...orderedDays.slice(0, dayIndexInCustomOrder)];
 
     return rotated;
+  }
+
+  deleteTrainingPlan(planId: number): void {
+    if (!confirm('Willst du diesen Trainingsplan wirklich löschen?')) return;
+
+    this.trainingsplanService.deleteTrainingPlan(planId).subscribe(
+      () => {
+        console.log('Trainingsplan gelöscht:', planId);
+        this.trainingPlans = this.trainingPlans.filter(plan => plan.id !== planId);
+      },
+      error => {
+        console.error('Fehler beim Löschen des Trainingsplans:', error);
+      }
+    );
+  }
+  score: number = 0;
+  gameInterval: any;
+  gravity: number = 0.1;
+  birdY: number = 200;
+  velocity: number = 0;
+  pipes: any[] = [];
+  gameRunning: boolean = false;
+
+  @ViewChild('gameCanvas', { static: false }) gameCanvas!: ElementRef<HTMLCanvasElement>;
+
+  startGame() {
+    this.resetGame();
+    this.gameRunning = true;
+    const ctx = this.gameCanvas.nativeElement.getContext('2d')!;
+    const canvas = this.gameCanvas.nativeElement;
+
+    let birdX = 30;
+    let pipeWidth = 50;
+    let gap = 150;
+
+    const draw = () => {
+      if (!this.gameRunning) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      this.velocity += this.gravity;
+      this.birdY += this.velocity;
+
+      ctx.fillStyle = "yellow";
+      ctx.fillRect(birdX, this.birdY, 20, 20);
+
+      if (this.pipes.length === 0 || this.pipes[this.pipes.length - 1].x < 150) {
+        const topHeight = Math.floor(Math.random() * 200) + 20;
+        this.pipes.push({ x: canvas.width, top: topHeight });
+      }
+
+      for (let i = 0; i < this.pipes.length; i++) {
+        const pipe = this.pipes[i];
+        pipe.x -= 1;
+
+        ctx.fillStyle = "green";
+        ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
+        ctx.fillRect(pipe.x, pipe.top + gap, pipeWidth, canvas.height - pipe.top - gap);
+
+        if (
+          birdX + 20 > pipe.x &&
+          birdX < pipe.x + pipeWidth &&
+          (this.birdY < pipe.top || this.birdY + 20 > pipe.top + gap)
+        ) {
+          this.stopGame();
+        }
+
+        if (pipe.x + pipeWidth < birdX && !pipe.passed) {
+          this.score++;
+          pipe.passed = true;
+        }
+      }
+
+      if (this.birdY + 20 > canvas.height || this.birdY < 0) {
+        this.stopGame();
+      }
+
+      requestAnimationFrame(draw);
+    };
+
+    document.addEventListener("keydown", this.flap);
+    document.addEventListener("keyup", this.stopFlap);
+    canvas.addEventListener("click", this.flap);
+
+    draw();
+  }
+
+  flap = () => {
+    if (this.gameRunning) {
+      if (this.birdY > 0) {
+        this.velocity = -3;
+      }
+    }
+  };
+
+  stopFlap = () => {
+    if (this.gameRunning) {
+      if (this.velocity < 0) {
+        this.velocity = 0;
+      }
+    }
+  };
+
+  resetGame() {
+    this.birdY = 200;
+    this.velocity = 0;
+    this.pipes = [];
+    this.score = 0;
+    this.gameRunning = true;
+  }
+
+  stopGame() {
+    this.gameRunning = false;
+    alert("Game Over! Deine Punkte: " + this.score);
+    document.removeEventListener("keydown", this.flap);
+    document.removeEventListener("keyup", this.stopFlap);
+    this.gameCanvas.nativeElement.removeEventListener("click", this.flap);
   }
 
 }
