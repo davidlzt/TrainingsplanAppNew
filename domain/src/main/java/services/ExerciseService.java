@@ -33,15 +33,20 @@ public class ExerciseService {
         exerciseRepository.deleteById(id);
     }
 
-    public void addMusclesAndDevicesToExercise(Long exerciseId, List<Muscle> muscles, List<Device> devices) {
+    public void addMusclesAndDevicesToExercise(Long exerciseId, List<Muscle> muscles, List<Device> device) {
         Optional<Exercise> exerciseOpt = exerciseRepository.findById(exerciseId);
         if (exerciseOpt.isPresent()) {
             Exercise exercise = exerciseOpt.get();
             exercise.setTargetMuscles(muscles);
-            exercise.setDevices(devices);
+
+            if (device != null && !device.isEmpty()) {
+                exercise.setDevice(device);
+            }
+
             exerciseRepository.save(exercise);
         }
     }
+
     public Long getMaxExerciseId() {
         List<Exercise> exercises = exerciseRepository.findAll(Sort.by(Sort.Order.desc("id")));
         if (!exercises.isEmpty()) {
