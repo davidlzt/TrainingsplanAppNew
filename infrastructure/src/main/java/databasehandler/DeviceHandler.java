@@ -13,8 +13,6 @@ public class DeviceHandler {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, device.getName());
             pstmt.setString(2, device.getDescription());
-            pstmt.setString(3, device.getType());
-            pstmt.setString(4, device.getImage());
             pstmt.executeUpdate();
             System.out.println("Gerät erfolgreich hinzugefügt!");
         } catch (SQLException e) {

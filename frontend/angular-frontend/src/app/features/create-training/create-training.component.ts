@@ -12,9 +12,10 @@ interface TrainingPlan {
   description: string;
   goal: string;
   trainingDays: number[];
-  selectedExercises: { [key: number]: string }
-}
+  exerciseIds: string[];
 
+
+}
 
 @Component({
   selector: 'app-create-training',
@@ -130,20 +131,20 @@ export class CreateTrainingComponent implements OnInit {
   }
 
   saveTraining() {
-    const exercisesToSave: { [key: number]: string } = {};
+    const exercisesToSave: string[] = [];
 
     for (const [day, muscles] of Object.entries(this.selectedExercises)) {
-      let exercisesForDay: string[] = [];
-
       for (const [muscle, exercises] of Object.entries(muscles)) {
         for (const [exerciseId, selected] of Object.entries(exercises)) {
           if (selected) {
-            exercisesForDay.push(exerciseId);
+            // @ts-ignore
+            const exerciseIds = this.availableExercises.find(e => e.id === +exerciseId);
+            if (exerciseIds) {
+              exercisesToSave.push(exerciseIds.id);
+            }
           }
         }
       }
-
-      exercisesToSave[+day] = exercisesForDay.join(',');
     }
 
     const trainingPlanData: TrainingPlan = {
@@ -151,7 +152,7 @@ export class CreateTrainingComponent implements OnInit {
       description: this.trainingDescription,
       goal: "Muskelaufbau",
       trainingDays: this.selectedTrainingDaysList,
-      selectedExercises: exercisesToSave,
+      exerciseIds: exercisesToSave,
     };
 
     console.log('Training speichern:', trainingPlanData);

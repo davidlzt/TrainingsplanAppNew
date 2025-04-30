@@ -1,11 +1,17 @@
 package restcontroller;
 
 import entitys.Trainingsplan;
+import entitys.TrainingsplanExercise;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import repositories.ExerciseRepository;
+import repositories.TrainingsplanRepository;
+import restcontroller.util.TrainingsplanRequestDTO;
 import services.TrainingsplanService;
 import entitys.Exercise;
+
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.List;
 
@@ -14,10 +20,14 @@ import java.util.List;
 public class TrainingsplanController {
 
     private final TrainingsplanService trainingsplanService;
+    private final ExerciseRepository exerciseRepository;
+    private final TrainingsplanRepository trainingsplanRepository;
 
     @Autowired
-    public TrainingsplanController(TrainingsplanService trainingsplanService) {
+    public TrainingsplanController(TrainingsplanService trainingsplanService, ExerciseRepository exerciseRepository, TrainingsplanRepository trainingsplanRepository) {
         this.trainingsplanService = trainingsplanService;
+        this.exerciseRepository = exerciseRepository;
+        this.trainingsplanRepository = trainingsplanRepository;
     }
     @GetMapping
     public List<Trainingsplan> getAllTrainingPlans() {
@@ -34,11 +44,45 @@ public class TrainingsplanController {
     }
 
     @PostMapping
-    public ResponseEntity<Trainingsplan> createTrainingsplan(@RequestBody Trainingsplan trainingsplan) {
-        System.out.println("Empfangene Daten: " + trainingsplan);
-        Trainingsplan savedPlan = trainingsplanService.createTrainingsplan(trainingsplan);
-        return ResponseEntity.ok(savedPlan);
+    public Trainingsplan createTrainingsplan(@RequestBody TrainingsplanRequestDTO request) {
+        // Zuerst den Trainingsplan erstellen
+        Trainingsplan trainingsplan = new Trainingsplan();
+        trainingsplan.setName(request.getName());
+        trainingsplan.setDescription(request.getDescription());
+        trainingsplan.setGoal(request.getGoal());
+        trainingsplan.setTrainingDays(request.getTrainingDays());
+
+        // Übungen verarbeiten
+        List<TrainingsplanExercise> trainingsplanExercises = new ArrayList<>();
+        System.out.println("Empfangene Übung-IDs: " + request.getExerciseIds());
+
+        if (request.getExerciseIds() != null && !request.getExerciseIds().isEmpty()) {
+            for (Long exerciseId : request.getExerciseIds()) {
+                Exercise exercise = exerciseRepository.findById(exerciseId)
+                        .orElseThrow(() -> new RuntimeException("Exercise not found with id: " + exerciseId));
+
+                // TrainingsplanExercise hinzufügen
+                TrainingsplanExercise trainingsplanExercise = new TrainingsplanExercise();
+                trainingsplanExercise.setExercise(exercise);
+                trainingsplanExercise.setTrainingsplan(trainingsplan);
+                trainingsplanExercises.add(trainingsplanExercise);
+            }
+        } else {
+            System.out.println("Keine Übungen übergeben.");
+        }
+
+        // Die Übungsliste dem Trainingsplan zuweisen
+        trainingsplan.setTrainingsplanExercises(trainingsplanExercises);
+
+        // Trainingsplan speichern
+        Trainingsplan savedTrainingsplan = trainingsplanRepository.save(trainingsplan);
+
+        // Jetzt TrainingsplanExercise speichern (wegen CascadeType.PERSIST und orphanRemoval = true wird das automatisch gehandhabt)
+
+        return savedTrainingsplan;
     }
+
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateTrainingsplan(@PathVariable Long id,

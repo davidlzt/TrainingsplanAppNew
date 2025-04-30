@@ -15,8 +15,6 @@ public class ExerciseHandler {
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, exercise.getName());
-            pstmt.setString(2, exercise.getDifficulty());
-            pstmt.setString(3, exercise.getImage());
             pstmt.setString(4, exercise.getDescription());
             pstmt.executeUpdate();
 
@@ -24,7 +22,6 @@ public class ExerciseHandler {
                 if (generatedKeys.next()) {
                     int exerciseId = generatedKeys.getInt(1);
                     insertExerciseMuscle(exerciseId, exercise.getTargetMuscles());
-                    insertExerciseDevice(exerciseId, exercise.getDevices());
                 }
             }
             System.out.println("Übung erfolgreich hinzugefügt!");

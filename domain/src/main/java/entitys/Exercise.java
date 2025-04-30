@@ -1,16 +1,20 @@
 package entitys;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Exercise {
 
     @Id
@@ -19,15 +23,16 @@ public class Exercise {
 
     private String name;
     private String description;
-    private String difficulty;
-    private String image;
 
-    @Version
-    private Integer version;
 
-    @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Muscle> targetMuscles;
+    private List<TrainingsplanExercise> trainingsplanExercises = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonBackReference
+    private List<Muscle> targetMuscles = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -35,18 +40,12 @@ public class Exercise {
             joinColumns = @JoinColumn(name = "exercise_id"),
             inverseJoinColumns = @JoinColumn(name = "device_id")
     )
-    @JsonManagedReference
-    private List<Device> device;
+    private List<Device> devices = new ArrayList<>();
 
-
-    public Exercise() {}
-
-    public Exercise(String name, String difficulty, String image, List<Muscle> targetMuscles, String description, List<Device> device) {
+    public Exercise(String name, List<Muscle> targetMuscles, String description, List<Device> devices) {
         this.name = name;
-        this.difficulty = difficulty;
-        this.image = image;
-        this.targetMuscles = targetMuscles;
+        this.targetMuscles = targetMuscles != null ? targetMuscles : new ArrayList<>();
         this.description = description;
-        this.device = device;
+        this.devices = devices != null ? devices : new ArrayList<>();
     }
 }

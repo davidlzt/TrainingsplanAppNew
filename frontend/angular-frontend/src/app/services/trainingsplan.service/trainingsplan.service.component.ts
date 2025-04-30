@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {Exercise} from '../../features/exercises/exercises.component';
 
 interface TrainingPlan {
   name: string;
   description: string;
   goal: string;
   trainingDays: number[];
-  selectedExercises: { [key: number]: string };
+  exerciseIds: string[];
 }
 
 @Injectable({
@@ -19,8 +20,13 @@ export class TrainingsplanService {
   constructor(private http: HttpClient) {}
 
   saveTrainingPlan(trainingPlanData: TrainingPlan): Observable<any> {
-    return this.http.post(this.apiUrl, trainingPlanData);
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post(this.apiUrl, trainingPlanData, { headers });
   }
+
   getAllTrainingPlans(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }

@@ -53,10 +53,11 @@
 
             <h5>Übungen:</h5>
             <ul class="exercise-list">
-              <li *ngFor="let exercise of plan.exercises">
-                {{ plan.name }} - {{ exercise.name }} - {{exercise.description}}
+              <li *ngFor="let exercise of plan.trainingsplanExercises">
+                {{ exercise.exercise.name }} - {{ exercise.exercise.description }}
               </li>
             </ul>
+
 
             <p class="training-days">Trainingstage: {{ formatTrainingDays(plan.trainingDays) }}</p>
             <button (click)="deleteTrainingPlan(plan.id)" class="delete-button">Löschen</button>

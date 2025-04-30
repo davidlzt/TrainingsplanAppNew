@@ -1,16 +1,19 @@
 package entitys;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import repositories.ExerciseRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@NoArgsConstructor
 @Entity
 public class Trainingsplan {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,31 +29,36 @@ public class Trainingsplan {
 
     @Setter
     @ElementCollection
-    private List<Integer> trainingDays;
+    private List<Long> trainingDays = new ArrayList<>();;
 
     @Setter
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Exercise> exercises = new ArrayList<>();
+    @OneToMany(mappedBy = "trainingsplan", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @JsonManagedReference
+    private List<TrainingsplanExercise> trainingsplanExercises = new ArrayList<>();
 
 
-    public Trainingsplan() {
-    }
-
-    public Trainingsplan(String name, String description, String goal, List<Integer> trainingDays, List<Exercise> exercises) {
+    public Trainingsplan(String name, String description, String goal, List<Long> trainingDays) {
         this.name = name;
         this.description = description;
         this.goal = goal;
         this.trainingDays = trainingDays;
-        this.exercises = exercises;
+    }
+
+    public List<Long> getExerciseIds() {
+        List<Long> exerciseIds = new ArrayList<>();
+        for (TrainingsplanExercise te : trainingsplanExercises) {
+            exerciseIds.add(te.getExercise().getId());
+        }
+        return exerciseIds;
     }
 
     public void addExercise(Exercise exercise) {
-        if (!exercises.contains(exercise)) {
-            exercises.add(exercise);
-        }
+        TrainingsplanExercise te = new TrainingsplanExercise(this, exercise);
+        trainingsplanExercises.add(te);
     }
 
     public void removeExercise(Exercise exercise) {
-        exercises.remove(exercise);
+        trainingsplanExercises.removeIf(te -> te.getExercise().equals(exercise));
     }
+
 }
