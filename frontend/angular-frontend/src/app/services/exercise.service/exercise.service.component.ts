@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Exercise } from '../../features/exercises/exercises.component';
 
 @Injectable({
@@ -16,8 +16,12 @@ export class ExerciseService {
     return this.http.get<Exercise[]>(this.apiUrl);
   }
 
-  addExercise(exercise: { instructions: string; name: string; description: string }): Observable<Exercise> {
-    return this.http.post<Exercise>(this.apiUrl, exercise);
+  addExercise(exercise: {id:string; name: string; description: string }): Observable<Exercise> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return this.http.post<any>(this.apiUrl, exercise, { headers });
   }
 
   removeExercise(exerciseId: string): Observable<void> {

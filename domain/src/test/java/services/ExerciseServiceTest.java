@@ -1,22 +1,26 @@
 package services;
 
-import entitys.Exercise;
 import entitys.Device;
+import entitys.Exercise;
 import entitys.Muscle;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 import repositories.ExerciseRepository;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-public class ExerciseServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ExerciseServiceTest {
 
     @Mock
     private ExerciseRepository exerciseRepository;
@@ -24,53 +28,99 @@ public class ExerciseServiceTest {
     @InjectMocks
     private ExerciseService exerciseService;
 
-    @Test
-    public void testAddExercise() {
-        Exercise exercise = new Exercise();
-        when(exerciseRepository.save(exercise)).thenReturn(exercise);
+    private Exercise exercise;
 
-        Exercise result = exerciseService.addExercise(exercise);
-        assertEquals(exercise, result);
+    @BeforeEach
+    void setUp() {
+        exercise = new Exercise();
+        exercise.setId(1L);
+        exercise.setName("Push Up");
     }
 
     @Test
-    public void testGetAllExercises() {
-        Exercise exercise1 = new Exercise();
-        Exercise exercise2 = new Exercise();
-        when(exerciseRepository.findAll()).thenReturn(Arrays.asList(exercise1, exercise2));
+    void testAddExercise() {
+        when(exerciseRepository.save(any(Exercise.class))).thenReturn(exercise);
+
+        Exercise createdExercise = exerciseService.addExercise(exercise);
+
+        assertNotNull(createdExercise);
+        assertEquals(exercise.getName(), createdExercise.getName());
+        verify(exerciseRepository, times(1)).save(any(Exercise.class));
+    }
+
+    @Test
+    void testGetAllExercises() {
+        when(exerciseRepository.findAll()).thenReturn(Arrays.asList(exercise));
 
         var exercises = exerciseService.getAllExercises();
+
         assertNotNull(exercises);
-        assertEquals(2, exercises.size());
+        assertFalse(exercises.isEmpty());
+        assertEquals(1, exercises.size());
+        assertEquals(exercise.getName(), exercises.get(0).getName());
+        verify(exerciseRepository, times(1)).findAll();
     }
 
     @Test
-    public void testGetExerciseById() {
-        Exercise exercise = new Exercise();
+    void testGetExerciseById() {
         when(exerciseRepository.findById(1L)).thenReturn(Optional.of(exercise));
 
-        Optional<Exercise> result = exerciseService.getExerciseById(1L);
-        assertTrue(result.isPresent());
-        assertEquals(exercise, result.get());
+        Optional<Exercise> foundExercise = exerciseService.getExerciseById(1L);
+
+        assertTrue(foundExercise.isPresent());
+        assertEquals(exercise.getName(), foundExercise.get().getName());
+        verify(exerciseRepository, times(1)).findById(1L);
     }
 
     @Test
-    public void testDeleteExercise() {
+    void testDeleteExercise() {
         doNothing().when(exerciseRepository).deleteById(1L);
 
         exerciseService.deleteExercise(1L);
+
         verify(exerciseRepository, times(1)).deleteById(1L);
     }
 
     @Test
-    public void testAddMusclesAndDevicesToExercise() {
-        Exercise exercise = new Exercise();
+    void testAddMusclesAndDevicesToExercise() {
         Muscle muscle = new Muscle();
+        muscle.setName("Chest");
         Device device = new Device();
+        device.setName("Dumbbell");
+
         when(exerciseRepository.findById(1L)).thenReturn(Optional.of(exercise));
+        when(exerciseRepository.save(any(Exercise.class))).thenReturn(exercise);
 
-        exerciseService.addMusclesAndDevicesToExercise(1L, List.of(muscle), List.of(device));
+        exerciseService.addMusclesAndDevicesToExercise(1L, Arrays.asList(muscle), Arrays.asList(device));
 
-        verify(exerciseRepository, times(1)).save(exercise);
+        assertEquals(1, exercise.getTargetMuscles().size());
+        assertEquals(1, exercise.getDevices().size());
+        assertEquals(muscle.getName(), exercise.getTargetMuscles().get(0).getName());
+        assertEquals(device.getName(), exercise.getDevices().get(0).getName());
+
+        verify(exerciseRepository, times(1)).findById(1L);
+        verify(exerciseRepository, times(1)).save(any(Exercise.class));
+    }
+
+    @Test
+    void testGetMaxExerciseId() {
+        Exercise exercise2 = new Exercise();
+        exercise2.setId(2L);
+        when(exerciseRepository.findAll(any(Sort.class))).thenReturn(Arrays.asList(exercise2, exercise));
+
+        Long maxId = exerciseService.getMaxExerciseId();
+
+        assertEquals(2L, maxId);
+        verify(exerciseRepository, times(1)).findAll(any(Sort.class));
+    }
+
+    @Test
+    void testGetMaxExerciseIdWhenNoExercises() {
+        when(exerciseRepository.findAll(any(Sort.class))).thenReturn(Arrays.asList());
+
+        Long maxId = exerciseService.getMaxExerciseId();
+
+        assertEquals(0L, maxId);
+        verify(exerciseRepository, times(1)).findAll(any(Sort.class));
     }
 }

@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ExerciseService } from '../../services/exercise.service/exercise.service.component';
+import {Muscle, MuscleService} from '../../services/muscle.service/muscle.service.component';
+import {Device, DeviceService} from '../../services/device.service/device.service.component';
 import { Exercise } from '../exercises/exercises.component';
 import { FormsModule } from '@angular/forms';
 import { MenuButtonComponent } from '../../shared/menu-button/menu-button.component';
@@ -12,22 +14,18 @@ import { NgForOf, NgIf } from '@angular/common';
   imports: [FormsModule, MenuButtonComponent, NgIf, NgForOf],
   styleUrls: ['./admin-panel.component.scss']
 })
-export class AdminPanelComponent {
+export class AdminPanelComponent implements OnInit {
   isFormVisible = false;
   newExercise: {
+    id: string;
     name: string;
     description: string;
-    instructions: string;
-    difficulty: string;
-    image: string;
-    targetMuscles: string[];
-    devices: string[];
+    targetMuscles: Muscle[];
+    devices: Device[];
   } = {
+    id: '',
     name: '',
     description: '',
-    instructions: '',
-    difficulty: '',
-    image: '',
     targetMuscles: [],
     devices: []
   };
@@ -35,22 +33,35 @@ export class AdminPanelComponent {
   showConfirmation = false;
   exerciseToRemove: Exercise | null = null;
 
-  constructor(private exerciseService: ExerciseService) {}
+  muscles: any[] = [];
+  devices: any[] = [];
+
+  constructor(
+    private exerciseService: ExerciseService,
+    private muscleService: MuscleService,
+    private deviceService: DeviceService
+  ) {}
 
   toggleForm() {
     this.isFormVisible = !this.isFormVisible;
   }
 
   addExercise() {
-    if (this.newExercise.name && this.newExercise.description && this.newExercise.instructions) {
-      this.exerciseService.addExercise(this.newExercise).subscribe((exercise) => {
+    if (this.newExercise.name && this.newExercise.description) {
+      const exerciseToAdd = {
+        id: '',
+        name: this.newExercise.name,
+        description: this.newExercise.description,
+        targetMuscles: this.newExercise.targetMuscles.map(muscle => muscle.id),
+        devices: this.newExercise.devices.map(device => device.id)
+      };
+
+      this.exerciseService.addExercise(exerciseToAdd).subscribe((exercise) => {
         this.exercises.push(exercise);
         this.newExercise = {
+          id: '',
           name: '',
           description: '',
-          instructions: '',
-          difficulty: '',
-          image: '',
           targetMuscles: [],
           devices: []
         };
@@ -83,11 +94,25 @@ export class AdminPanelComponent {
 
   ngOnInit() {
     this.loadExercises();
+    this.loadMuscles();
+    this.loadDevices();
   }
 
   loadExercises() {
     this.exerciseService.getExercises().subscribe((data) => {
       this.exercises = data;
+    });
+  }
+
+  loadMuscles() {
+    this.muscleService.getMuscles().subscribe((data) => {
+      this.muscles = data;
+    });
+  }
+
+  loadDevices() {
+    this.deviceService.getDevices().subscribe((data) => {
+      this.devices = data;
     });
   }
 }

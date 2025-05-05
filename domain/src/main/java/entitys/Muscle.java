@@ -1,8 +1,13 @@
 package entitys;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -16,26 +21,33 @@ public class Muscle {
     private String name;
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "exercise_id")
-    private Exercise exercise;
+    @ManyToMany(mappedBy = "targetMuscles")
+    @JsonIgnore
+    private List<Exercise> exercises;
+
 
     public Muscle() {
     }
 
-    public Muscle(String name, String description, Exercise exercise) {
+    public Muscle(String name, String description, List<Exercise> exercise) {
         this.name = name;
         this.description = description;
-        this.exercise = exercise;
+        this.exercises =  exercise;
     }
+
+    public Muscle(String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.exercises = new ArrayList<>();
+    }
+
 
     @Override
     public String toString() {
         return "Muscle{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", exercise=" + exercise +
+                ", description='" + description + '\''+
                 '}';
     }
 }

@@ -5,19 +5,30 @@
   <button class="btn add-exercise-btn" (click)="toggleForm()">+ Add Exercise</button>
 
   <div *ngIf="isFormVisible" class="add-exercise-form">
-    <input [(ngModel)]="newExercise.name" type="text" placeholder="Name" />
-    <input [(ngModel)]="newExercise.description" type="text" placeholder="Description" />
-    <input [(ngModel)]="newExercise.instructions" type="text" placeholder="Instructions" />
+    <div class="input-container">
+      <input [(ngModel)]="newExercise.name" type="text" placeholder="Enter Exercise Name" class="form-input" />
+    </div>
+    <div class="input-container">
+      <textarea [(ngModel)]="newExercise.description" placeholder="Enter Description" class="form-input"></textarea>
+    </div>
 
-    <input [(ngModel)]="newExercise.difficulty" type="text" placeholder="Difficulty (e.g., Beginner, Intermediate, Advanced)" />
+    <div class="dropdown-container">
+      <div class="dropdown">
+        <label for="targetMuscles">Target Muscles</label>
+        <select multiple [(ngModel)]="newExercise.targetMuscles" id="targetMuscles">
+          <option *ngFor="let muscle of muscles" [value]="muscle.id">{{ muscle.name }}</option>
+        </select>
+      </div>
 
-    <input [(ngModel)]="newExercise.image" type="text" placeholder="Image URL" />
+      <div class="dropdown">
+        <label for="devices">Devices</label>
+        <select multiple [(ngModel)]="newExercise.devices" id="devices">
+          <option *ngFor="let device of devices" [value]="device.id">{{ device.name }}</option>
+        </select>
+      </div>
+    </div>
 
-    <input [(ngModel)]="newExercise.targetMuscles" type="text" placeholder="Target Muscles (comma separated)" />
-
-    <input [(ngModel)]="newExercise.devices" type="text" placeholder="Devices (comma separated)" />
-
-    <button class="btn add-exercise-btn" (click)="addExercise()">Add Exercise</button>
+    <button class="btn add-exercise-btn" (click)="addExercise()">Add</button>
   </div>
 
   <div class="exercise-list" *ngIf="exercises.length > 0">

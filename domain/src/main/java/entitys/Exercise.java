@@ -1,8 +1,6 @@
 package entitys;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +19,9 @@ public class Exercise {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Version
+    private Long version;
+
     private String name;
     private String description;
 
@@ -30,9 +31,14 @@ public class Exercise {
     private List<TrainingsplanExercise> trainingsplanExercises = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JsonBackReference
-    private List<Muscle> targetMuscles = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "exercise_muscle",
+            joinColumns = @JoinColumn(name = "exercise_id"),
+            inverseJoinColumns = @JoinColumn(name = "muscle_id")
+    )
+    @JsonIgnore
+    private List<Muscle> targetMuscles;
 
     @ManyToMany
     @JoinTable(

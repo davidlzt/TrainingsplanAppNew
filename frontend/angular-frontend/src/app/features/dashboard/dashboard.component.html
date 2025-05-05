@@ -16,7 +16,7 @@
           <span class="calendar-date">{{ day.date }} {{ day.month }}</span>
           <div *ngIf="dayHasTraining(day)" class="training-details">
             <div *ngFor="let plan of trainingPlans">
-              <div *ngIf="isTrainingDay(day.date ?? 0, plan.trainingDays)">
+              <div class="training-displayedname" *ngIf="isTrainingDay(day.date ?? 0, plan.trainingDays)">
                 {{ plan.name }}
               </div>
             </div>
@@ -48,17 +48,13 @@
         <h3>Trainingspläne</h3>
         <ul>
           <li *ngFor="let plan of trainingPlans">
-            <h4 class="trainingsplan-name">{{ plan.name }} (Ziel: {{ plan.goal }})</h4>
-            <p class="plan-details">{{ plan.description }}</p>
-
+            <h4 class="trainingsplan-name">{{ plan.name }}- {{ plan.description }}</h4>
             <h5>Übungen:</h5>
             <ul class="exercise-list">
               <li *ngFor="let exercise of plan.trainingsplanExercises">
                 {{ exercise.exercise.name }} - {{ exercise.exercise.description }}
               </li>
             </ul>
-
-
             <p class="training-days">Trainingstage: {{ formatTrainingDays(plan.trainingDays) }}</p>
             <button (click)="deleteTrainingPlan(plan.id)" class="delete-button">Löschen</button>
           </li>

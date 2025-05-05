@@ -20,20 +20,14 @@ import java.util.List;
 public class TrainingsplanController {
 
     private final TrainingsplanService trainingsplanService;
-    private final ExerciseRepository exerciseRepository;
-    private final TrainingsplanRepository trainingsplanRepository;
 
     @Autowired
     public TrainingsplanController(TrainingsplanService trainingsplanService, ExerciseRepository exerciseRepository, TrainingsplanRepository trainingsplanRepository) {
         this.trainingsplanService = trainingsplanService;
-        this.exerciseRepository = exerciseRepository;
-        this.trainingsplanRepository = trainingsplanRepository;
     }
     @GetMapping
     public List<Trainingsplan> getAllTrainingPlans() {
-        List<Trainingsplan> plans = trainingsplanService.getAllTrainingPlans();
-        System.out.println("Trainingspläne aus der Datenbank: " + plans);
-        return plans;
+        return trainingsplanService.getAllTrainingPlans();
     }
 
     @GetMapping("/{id}")
@@ -45,44 +39,14 @@ public class TrainingsplanController {
 
     @PostMapping
     public Trainingsplan createTrainingsplan(@RequestBody TrainingsplanRequestDTO request) {
-        // Zuerst den Trainingsplan erstellen
         Trainingsplan trainingsplan = new Trainingsplan();
         trainingsplan.setName(request.getName());
         trainingsplan.setDescription(request.getDescription());
         trainingsplan.setGoal(request.getGoal());
         trainingsplan.setTrainingDays(request.getTrainingDays());
 
-        // Übungen verarbeiten
-        List<TrainingsplanExercise> trainingsplanExercises = new ArrayList<>();
-        System.out.println("Empfangene Übung-IDs: " + request.getExerciseIds());
-
-        if (request.getExerciseIds() != null && !request.getExerciseIds().isEmpty()) {
-            for (Long exerciseId : request.getExerciseIds()) {
-                Exercise exercise = exerciseRepository.findById(exerciseId)
-                        .orElseThrow(() -> new RuntimeException("Exercise not found with id: " + exerciseId));
-
-                // TrainingsplanExercise hinzufügen
-                TrainingsplanExercise trainingsplanExercise = new TrainingsplanExercise();
-                trainingsplanExercise.setExercise(exercise);
-                trainingsplanExercise.setTrainingsplan(trainingsplan);
-                trainingsplanExercises.add(trainingsplanExercise);
-            }
-        } else {
-            System.out.println("Keine Übungen übergeben.");
-        }
-
-        // Die Übungsliste dem Trainingsplan zuweisen
-        trainingsplan.setTrainingsplanExercises(trainingsplanExercises);
-
-        // Trainingsplan speichern
-        Trainingsplan savedTrainingsplan = trainingsplanRepository.save(trainingsplan);
-
-        // Jetzt TrainingsplanExercise speichern (wegen CascadeType.PERSIST und orphanRemoval = true wird das automatisch gehandhabt)
-
-        return savedTrainingsplan;
+        return trainingsplanService.createTrainingsplanWithExercises(trainingsplan, request.getExerciseIds());
     }
-
-
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateTrainingsplan(@PathVariable Long id,
@@ -103,16 +67,12 @@ public class TrainingsplanController {
 
     @GetMapping("/{id}/exercises")
     public List<Exercise> getExercisesForTrainingsplan(@PathVariable Long id) {
-        List<Exercise> exercises = trainingsplanService.getExercisesForTrainingsplan(id);
-        System.out.println("Trainingspläne aus der Datenbank: " + exercises);
-        return exercises;
+        return trainingsplanService.getExercisesForTrainingsplan(id);
     }
 
     @GetMapping("/{id}/training-frequency")
     public int getTrainingFrequencyForTrainingsplan(@PathVariable Long id) {
-        int days = trainingsplanService.getTrainingFrequencyForTrainingsplan(id);
-        System.out.println("Trainingsplan aus der Datenbank: " + days);
-        return days;
+        return trainingsplanService.getTrainingFrequencyForTrainingsplan(id);
     }
 
 }

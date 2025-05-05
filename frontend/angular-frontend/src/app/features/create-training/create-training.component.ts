@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { MenuButtonComponent } from '../../shared/menu-button/menu-button.component';
 import {TrainingsplanService} from '../../services/trainingsplan.service/trainingsplan.service.component';
+import {Muscle, MuscleService} from '../../services/muscle.service/muscle.service.component';
 
 interface TrainingPlan {
   name: string;
@@ -13,8 +14,6 @@ interface TrainingPlan {
   goal: string;
   trainingDays: number[];
   exerciseIds: string[];
-
-
 }
 
 @Component({
@@ -35,7 +34,8 @@ export class CreateTrainingComponent implements OnInit {
   selectedTrainingDays: number = 0;
   selectedTrainingDaysList: number[] = [];
   availableExercises: Exercise[] = [];
-  availableMuscleGroups: string[] = ['Brust', 'Rücken', 'Schulter', 'Arme', 'Beine', 'Bauch'];
+  availableMuscleGroups: string[] = [];
+  allMuscles: Muscle[] = [];
   dayNames: string[] = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
   selectedExercises: { [day: number]: { [muscle: string]: { [exerciseId: string]: boolean } } } = {};
 
@@ -43,11 +43,12 @@ export class CreateTrainingComponent implements OnInit {
   trainingName: string = '';
   trainingDescription: string = '';
 
-  constructor(private exerciseService: ExerciseService, private router: Router, private trainingplanService: TrainingsplanService) {}
+  constructor(private exerciseService: ExerciseService, private router: Router, private trainingplanService: TrainingsplanService,
+              private muscleService: MuscleService,) {}
 
   ngOnInit() {
     this.loadAvailableExercises();
-
+    this.loadAvailableMuscles();
     this.selectedTrainingDaysList.forEach(day => {
       this.selectedExercises[day] = this.selectedExercises[day] || {};
 
@@ -62,6 +63,17 @@ export class CreateTrainingComponent implements OnInit {
     this.selectedTrainingDaysList = [];
   }
 
+  loadAvailableMuscles() {
+    this.muscleService.getMuscles().subscribe(
+      (muscles) => {
+        this.allMuscles = muscles;
+        this.availableMuscleGroups = muscles.map(m => m.name);
+      },
+      (error) => {
+        console.error('Fehler beim Laden der Muskelgruppen', error);
+      }
+    );
+  }
   toggleTrainingDay(dayIndex: number) {
     if (this.selectedTrainingDaysList.includes(dayIndex)) {
       this.selectedTrainingDaysList = this.selectedTrainingDaysList.filter(day => day !== dayIndex);

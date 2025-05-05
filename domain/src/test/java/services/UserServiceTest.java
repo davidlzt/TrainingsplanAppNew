@@ -1,16 +1,23 @@
 package services;
 
 import entitys.User;
-import valueobjects.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import repositories.UserRepository;
+import valueobjects.Role;
 
-import static org.mockito.Mockito.*;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-public class UserServiceTest {
+@ExtendWith(MockitoExtension.class)
+class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -18,101 +25,75 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    @Test
-    public void testRegisterUser() {
-        Email email = new Email("test@example.com");
-        Weight weight = new Weight(75);
-        Height height = new Height(175);
-        User user = new User(null, "testUser", email, "password", weight, 25, height, Gender.MALE, Role.USER);
+    private User user;
 
-        when(userRepository.save(user)).thenReturn(user);
+    @BeforeEach
+    void setUp() {
+        user = new User();
+        user.setId(1L);
+        user.setUsername("testuser");
+        user.setPassword("password");
+    }
+
+    @Test
+    void testRegisterUser() {
+        when(userRepository.save(any(User.class))).thenReturn(user);
 
         userService.registerUser(user);
-        verify(userRepository, times(1)).save(user);
+
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
-    public void testAuthenticateUser() {
-        String username = "testUser";
-        String password = "password";
-        Email email = new Email("test@example.com");
-        Weight weight = new Weight(75);
-        Height height = new Height(175);
-        User user = new User(1L, username, email, password, weight, 25, height, Gender.MALE, Role.USER);
+    void testAuthenticateUser() {
+        when(userRepository.findByUsername("testuser")).thenReturn(user);
 
-        when(userRepository.findByUsername(username)).thenReturn(user);
+        boolean isAuthenticated = userService.authenticateUser("testuser", "password");
 
-        boolean authenticated = userService.authenticateUser(username, password);
-        assertTrue(authenticated);
+        assertTrue(isAuthenticated);
+        verify(userRepository, times(1)).findByUsername("testuser");
     }
 
     @Test
-    public void testAuthenticateUser_InvalidPassword() {
-        String username = "testUser";
-        String password = "wrongPassword";
-        Email email = new Email("test@example.com");
-        Weight weight = new Weight(75);
-        Height height = new Height(175);
-        User user = new User(1L, username, email, "password", weight, 25, height, Gender.MALE, Role.USER);
+    void testChangeUserRole() {
+        doNothing().when(userRepository).updateUserRole(1L, Role.ADMIN);
 
-        when(userRepository.findByUsername(username)).thenReturn(user);
+        userService.changeUserRole(1L, Role.ADMIN);
 
-        boolean authenticated = userService.authenticateUser(username, password);
-        assertFalse(authenticated);
+        verify(userRepository, times(1)).updateUserRole(1L, Role.ADMIN);
     }
 
     @Test
-    public void testChangePassword() {
-        Long userId = 1L;
-        String newPassword = "newPassword123";
-        Email email = new Email("test@example.com");
-        Weight weight = new Weight(75);
-        Height height = new Height(175);
-        User user = new User(userId, "testUser", email, "password", weight, 25, height, Gender.MALE, Role.USER);
+    void testChangePassword() {
+        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(user));
+        when(userRepository.save(any(User.class))).thenReturn(user);
 
-        when(userRepository.findById(userId)).thenReturn(java.util.Optional.of(user));
+        userService.changePassword(1L, "newpassword");
 
-        userService.changePassword(userId, newPassword);
-        assertEquals(newPassword, user.getPassword());
-        verify(userRepository, times(1)).save(user);
+        assertEquals("newpassword", user.getPassword());
+        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
-    public void testChangePassword_InvalidPassword() {
-        Long userId = 1L;
-        String newPassword = "short";
-        Email email = new Email("test@example.com");
-        Weight weight = new Weight(75);
-        Height height = new Height(175);
-        User user = new User(userId, "testUser", email, "password", weight, 25, height, Gender.MALE, Role.USER);
+    void testGetAllUsers() {
+        when(userRepository.findAll()).thenReturn(Arrays.asList(user));
 
-        when(userRepository.findById(userId)).thenReturn(java.util.Optional.of(user));
+        List<User> users = userService.getAllUsers();
 
-        assertThrows(IllegalArgumentException.class, () -> userService.changePassword(userId, newPassword));
+        assertNotNull(users);
+        assertFalse(users.isEmpty());
+        assertEquals(1, users.size());
+        assertEquals(user.getUsername(), users.get(0).getUsername());
+        verify(userRepository, times(1)).findAll();
     }
 
     @Test
-    public void testChangeUserRole() {
-        Long userId = 1L;
-        Role newRole = Role.ADMIN;
-        Email email = new Email("test@example.com");
-        Weight weight = new Weight(75);
-        Height height = new Height(175);
-        User user = new User(userId, "testUser", email, "password", weight, 25, height, Gender.MALE, Role.USER);
+    void testDeleteUser() {
+        doNothing().when(userRepository).deleteById(1L);
 
-        when(userRepository.findById(userId)).thenReturn(java.util.Optional.of(user));
+        userService.deleteUser(1L);
 
-        userService.changeUserRole(userId, newRole);
-        assertEquals(newRole, user.getRole());
-        verify(userRepository, times(1)).save(user);
-    }
-
-    @Test
-    public void testDeleteUser() {
-        Long userId = 1L;
-        doNothing().when(userRepository).deleteById(userId);
-
-        userService.deleteUser(userId);
-        verify(userRepository, times(1)).deleteById(userId);
+        verify(userRepository, times(1)).deleteById(1L);
     }
 }

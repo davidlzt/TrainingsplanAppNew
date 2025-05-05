@@ -43,30 +43,27 @@ public class TrainingsplanService {
         return trainingsplanRepository.findAll();
     }
 
-    public Trainingsplan createTrainingsplan(Trainingsplan trainingsplan) {
+    public Trainingsplan createTrainingsplanWithExercises(Trainingsplan trainingsplan, List<Long> exerciseIds) {
         List<TrainingsplanExercise> trainingsplanExercises = new ArrayList<>();
 
-        for (Long exerciseId : trainingsplan.getExerciseIds()) {
-            Exercise exercise = exerciseRepository.findById(exerciseId)
-                    .orElseThrow(() -> new RuntimeException("Exercise not found with id: " + exerciseId));
+        if (exerciseIds != null && !exerciseIds.isEmpty()) {
+            for (Long exerciseId : exerciseIds) {
+                Exercise exercise = exerciseRepository.findById(exerciseId)
+                        .orElseThrow(() -> new RuntimeException("Exercise not found with id: " + exerciseId));
 
-            if (exercise != null) {
-                TrainingsplanExercise trainingsplanExercise = new TrainingsplanExercise();
-                trainingsplanExercise.setExercise(exercise);
-                trainingsplanExercise.setTrainingsplan(trainingsplan);
-                trainingsplanExercises.add(trainingsplanExercise);
-            } else {
-                System.out.println("Übung mit ID " + exerciseId + " wurde nicht gefunden.");
+                TrainingsplanExercise tpe = new TrainingsplanExercise();
+                tpe.setExercise(exercise);
+                tpe.setTrainingsplan(trainingsplan);
+                trainingsplanExercises.add(tpe);
             }
-        }
-
-        if (trainingsplanExercises.isEmpty()) {
-            System.out.println("Keine Übungen zugeordnet!");
+        } else {
+            System.out.println("Keine Übungen übergeben.");
         }
 
         trainingsplan.setTrainingsplanExercises(trainingsplanExercises);
         return trainingsplanRepository.save(trainingsplan);
     }
+
 
     public void updateTrainingsplan(Long id, String name, String description, String goal, List<Long> trainingDays) {
         trainingsplanRepository.updateTrainingsplan(id, name, description, goal, trainingDays);
