@@ -30,10 +30,8 @@ public class ExerciseController {
 
     @Autowired
     private ExerciseService exerciseService;
-    private final MuscleRepository muscleRepository;
 
     public ExerciseController(MuscleRepository muscleRepository) {
-        this.muscleRepository = muscleRepository;
     }
 
     @GetMapping(produces = "application/json")
@@ -54,26 +52,7 @@ public class ExerciseController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(null);
         }
-        Exercise exercise = new Exercise();
-        exercise.setName(exerciseRequestDTO.getName());
-        exercise.setDescription(exerciseRequestDTO.getDescription());
-        List<Device> devices = exerciseRequestDTO.getDeviceIds();
-        if (devices == null) {
-            devices = new ArrayList<>();
-        }
-        devices.forEach(device -> device.getExercises().add(exercise));
-        List<Long> muscleIds = exerciseRequestDTO.getMuscleIds();
-        if (muscleIds == null) {
-            muscleIds = new ArrayList<>();
-        }
-        List<Long> filteredMuscleIds = muscleIds.stream()
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        List<Muscle> muscles = muscleRepository.findAllById(filteredMuscleIds);
-        exercise.setDevices(devices);
-        exercise.setTargetMuscles(muscles);
-
-        Exercise newExercise = exerciseService.addExercise(exercise);
+        Exercise newExercise = ExerciseDTO.getExercise(exerciseRequestDTO);
         return new ResponseEntity<>(newExercise, HttpStatus.CREATED);
     }
 
