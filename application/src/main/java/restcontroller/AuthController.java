@@ -1,6 +1,5 @@
 package restcontroller;
 
-import services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import repositories.UserRepository;
 import entitys.User;
 import restcontroller.util.LoginRequest;
+import services.UserService;
 
 import java.util.Map;
 
@@ -17,10 +17,13 @@ import java.util.Map;
 public class AuthController {
 
     @Autowired
-    private AuthService authService;
-
-    @Autowired
     private UserRepository userRepository;
+
+    private final UserService userService;
+
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/register/nextid")
     public Long getNextUserId() {
@@ -31,13 +34,13 @@ public class AuthController {
 
     @PostMapping("/register")
     public void register(@RequestBody User user) {
-        authService.registerUser(user);
+        userService.registerUser(user);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
-            if (authService.verifyUser(loginRequest.getUsername(), loginRequest.getPassword())) {
+            if (userService.authenticateUser(loginRequest.getUsername(), loginRequest.getPassword())) {
                 System.out.println("Login successful");
                 return ResponseEntity.ok(Map.of("success", true));
             } else {

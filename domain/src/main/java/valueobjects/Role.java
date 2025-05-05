@@ -1,6 +1,5 @@
 package valueobjects;
 
-import jakarta.persistence.Entity;
 import lombok.Getter;
 @Getter
 public enum Role {
