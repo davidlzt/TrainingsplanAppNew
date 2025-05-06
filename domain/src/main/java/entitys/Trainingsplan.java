@@ -24,6 +24,9 @@ public class Trainingsplan {
     private String description;
 
     @Setter
+    private String goal;
+
+    @Setter
     @ElementCollection
     private List<Long> trainingDays = new ArrayList<>();;
 
