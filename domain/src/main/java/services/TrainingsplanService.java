@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import repositories.ExerciseRepository;
 import repositories.TrainingsplanRepository;
+import strategies.TrainingsplanStrategy;
+import strategies.TrainingsplanStrategyFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +19,15 @@ public class TrainingsplanService {
 
     private final ExerciseRepository exerciseRepository;
     private final TrainingsplanRepository trainingsplanRepository;
-
+private final TrainingsplanStrategyFactory strategyFactory;
     @Autowired
-    public TrainingsplanService(ExerciseRepository exerciseRepository, TrainingsplanRepository trainingsplanRepository) {
+    public TrainingsplanService(
+            ExerciseRepository exerciseRepository,
+            TrainingsplanRepository trainingsplanRepository,
+            TrainingsplanStrategyFactory strategyFactory) {
         this.exerciseRepository = exerciseRepository;
         this.trainingsplanRepository = trainingsplanRepository;
+        this.strategyFactory = strategyFactory;
     }
 
     public Optional<Trainingsplan> getTrainingsplanWithExercises(Long id) {
@@ -101,4 +107,24 @@ public class TrainingsplanService {
         return 0;
     }
 
+    public Trainingsplan createTrainingsplanWithExercisesAndStrategy(Trainingsplan trainingsplan, List<Long> exerciseIds) {
+        List<Exercise> allExercises = (exerciseIds != null && !exerciseIds.isEmpty())
+                ? exerciseRepository.findAllById(exerciseIds)
+                : exerciseRepository.findAll();
+
+        TrainingsplanStrategy strategy = strategyFactory.getStrategy(String.valueOf(trainingsplan.getGoal()));
+        List<Exercise> selectedExercises = strategy.selectExercises(allExercises);
+
+        List<TrainingsplanExercise> trainingsplanExercises = selectedExercises.stream()
+                .map(exercise -> {
+                    TrainingsplanExercise tpe = new TrainingsplanExercise();
+                    tpe.setExercise(exercise);
+                    tpe.setTrainingsplan(trainingsplan);
+                    return tpe;
+                })
+                .toList();
+
+        trainingsplan.setTrainingsplanExercises(trainingsplanExercises);
+        return trainingsplanRepository.save(trainingsplan);
+    }
 }

@@ -10,6 +10,7 @@ import repositories.TrainingsplanRepository;
 import restcontroller.util.TrainingsplanRequestDTO;
 import services.TrainingsplanService;
 import entitys.Exercise;
+import valueobjects.Trainingsziel;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -42,10 +43,10 @@ public class TrainingsplanController {
         Trainingsplan trainingsplan = new Trainingsplan();
         trainingsplan.setName(request.getName());
         trainingsplan.setDescription(request.getDescription());
-        trainingsplan.setGoal(request.getGoal());
+        trainingsplan.setGoal(Trainingsziel.fromLabel(request.getGoal()));
         trainingsplan.setTrainingDays(request.getTrainingDays());
 
-        return trainingsplanService.createTrainingsplanWithExercises(trainingsplan, request.getExerciseIds());
+        return trainingsplanService.createTrainingsplanWithExercisesAndStrategy(trainingsplan, request.getExerciseIds());
     }
 
     @PutMapping("/{id}")
@@ -54,7 +55,7 @@ public class TrainingsplanController {
         trainingsplanService.updateTrainingsplan(id,
                 trainingsplan.getName(),
                 trainingsplan.getDescription(),
-                trainingsplan.getGoal(),
+                trainingsplan.getGoal().getLabel(),
                 trainingsplan.getTrainingDays());
         return ResponseEntity.noContent().build();
     }
@@ -74,5 +75,4 @@ public class TrainingsplanController {
     public int getTrainingFrequencyForTrainingsplan(@PathVariable Long id) {
         return trainingsplanService.getTrainingFrequencyForTrainingsplan(id);
     }
-
 }

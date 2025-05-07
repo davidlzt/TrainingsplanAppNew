@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"restcontroller", "Application", "services", "repositories", "entitys", "valueobjects"})
+@ComponentScan(basePackages = {"restcontroller", "Application", "services", "repositories", "entitys", "valueobjects", "strategies"})
 @EnableJpaRepositories(basePackages = "repositories")
 @EntityScan(basePackages = "entitys")
 @Import(CorsConfig.class)

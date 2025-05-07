@@ -1,3 +1,44 @@
+ng-select {
+  width: 100%;
+  background-color: #333;
+  color: white;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.ng-select .ng-select-container {
+  background-color: #333;
+  color: white;
+  border-radius: 5px;
+  border: 1px solid #444;
+}
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+.ng-select .ng-dropdown-panel {
+  background-color: #222;
+  color: white;
+  border-radius: 5px;
+  border: 1px solid #444;
+}
+
+.ng-select .ng-option {
+  background-color: #333;
+  color: white;
+}
+
+.ng-select .ng-option:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.ng-select .ng-option.selected {
+  background-color: #0056b3;
+  color: white;
+}
+
 .training-container {
   max-width: 900px;
   margin: auto;
@@ -61,6 +102,7 @@ input, textarea {
   background-color: #333;
   color: white;
   font-size: 1rem;
+  box-sizing: border-box;
 }
 
 input:focus, textarea:focus {
@@ -73,7 +115,6 @@ textarea {
   resize: vertical;
 }
 
-/* Step 3 - Muskelgruppen-Checkboxen */
 .muscle-group-container {
   display: flex;
   flex-wrap: wrap;
@@ -125,7 +166,8 @@ textarea {
 
 .btn-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   margin-top: 20px;
 }
 
@@ -136,15 +178,20 @@ textarea {
   cursor: pointer;
 }
 
+.next-btn, .save-btn {
+  background-color: #4CAF50;
+  color: white;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  display: block;
+}
+
 .back-btn {
   background-color: #f44336;
   color: white;
 }
 
-.next-btn {
-  background-color: #4CAF50;
-  color: white;
-}
 
 .save-btn {
   width: 100%;
@@ -204,7 +251,6 @@ textarea {
     flex-basis: 100%;
   }
 }
-/* Step 3 - Muskelgruppen-Checkboxen */
 .muscle-group-container {
   display: flex;
   flex-wrap: wrap;
@@ -212,7 +258,7 @@ textarea {
 }
 
 .muscle-group-container .muscle-group {
-  flex-basis: 30%; /* 30% der Breite für jede Checkbox */
+  flex-basis: 30%;
   margin-bottom: 20px;
   display: flex;
   align-items: center;
@@ -225,7 +271,7 @@ textarea {
 }
 
 .muscle-group-container input[type="checkbox"] {
-  accent-color: #00bcd4; /* Farbe des Häkchens */
+  accent-color: #00bcd4;
 }
 
 .day-box-wrapper {

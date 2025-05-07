@@ -11,6 +11,12 @@
     <label for="training-description">Beschreibung</label>
     <textarea id="training-description" placeholder="Beschreibung des Trainings" [(ngModel)]="trainingDescription" [ngModelOptions]="{standalone: true}"></textarea>
 
+    <label for="trainings-strategy">Trainingsstrategie</label>
+    <select id="trainings-strategy" [(ngModel)]="selectedStrategy" [ngModelOptions]="{standalone: true}">
+      <option *ngFor="let strategy of trainingStrategy" [value]="strategy">
+        {{ strategy }}
+      </option>
+    </select>
     <h3>Wie oft möchtest du pro Woche trainieren?</h3>
     <div class="day-selection">
       <button *ngFor="let day of [1, 2, 3, 4, 5, 6, 7]"
@@ -34,16 +40,23 @@
     </div>
     <button class="btn next-btn" [disabled]="selectedTrainingDaysList.length !== selectedTrainingDays" (click)="nextStep()">Weiter</button>
   </div>
-
   <div *ngIf="step === 3" class="step-container">
     <h3>Wähle Muskelgruppen für jeden Trainingstag</h3>
     <div class="day-box-wrapper">
       <div *ngFor="let day of selectedTrainingDaysList">
         <div class="day-box">
           <h4>{{ dayNames[day] }}</h4>
-          <div *ngFor="let muscle of availableMuscleGroups">
-            {{ muscle }}
-            <input type="checkbox" [(ngModel)]="selectedMuscleGroups[day][muscle]" />
+          <ng-select [items]="availableMuscleGroups"
+                     [(ngModel)]="selectedMuscleGroups[day]"
+                     [multiple]="true"
+                     bindLabel="name"
+                     placeholder="Wähle Muskelgruppen"
+                     [closeOnSelect]="false"
+                     [searchable]="true"
+                     [clearable]="true">
+          </ng-select>
+          <div *ngIf="!selectedMuscleGroups[day]" class="error-message">
+            Bitte wähle mindestens eine Muskelgruppe aus.
           </div>
         </div>
       </div>
@@ -51,28 +64,27 @@
     <button class="btn next-btn" [disabled]="!areMuscleGroupsSelected()" (click)="nextStep()">Weiter</button>
   </div>
 
-
-
   <div *ngIf="step === 4" class="step-container">
     <h3>Wähle Übungen für die ausgewählten Muskelgruppen</h3>
     <div class="day-box-wrapper">
       <div *ngFor="let day of selectedTrainingDaysList">
         <div class="day-box">
           <h4>{{ dayNames[day] }}</h4>
-          <div *ngFor="let muscle of availableMuscleGroups">
-            <div *ngIf="selectedMuscleGroups[day][muscle]">
-              <label>{{ muscle }}</label>
-              <div *ngFor="let exercise of availableExercises">
-                {{ exercise.name }}
-                <input type="checkbox"
-                       [(ngModel)]="selectedExercises[day][muscle][exercise.id]"
-                       [value]="exercise.id" />
-              </div>
-            </div>
+          <div *ngFor="let muscle of selectedMuscleGroups[day] | keyvalue">
+            <label>{{ muscle.key }}</label>
+            <ng-select [items]="availableExercises"
+                       [(ngModel)]="selectedExercises[day][muscle.key]"
+                       [multiple]="true"
+                       bindLabel="name"
+                       placeholder="Wähle Übungen"
+                       [closeOnSelect]="false"
+                       [searchable]="true"
+                       [clearable]="true">
+            </ng-select>
           </div>
         </div>
       </div>
     </div>
-    <button class="btn save-btn" (click)="saveTraining()">Training speichern</button>
+    <button class="btn next-btn" [disabled]="!areExercisesSelected()" (click)="saveTraining()">Training speichern</button>
   </div>
 </div>

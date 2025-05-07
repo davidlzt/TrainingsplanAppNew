@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import valueobjects.Trainingsziel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +24,10 @@ public class Trainingsplan {
     @Setter
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     @Setter
-    private String goal;
+    private Trainingsziel goal;
 
     @Setter
     @ElementCollection

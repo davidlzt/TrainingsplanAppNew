@@ -25,8 +25,4 @@ public class TrainingsplanExercise {
     @JoinColumn(name = "exercise_id")
     private Exercise exercise;
 
-    public TrainingsplanExercise(Trainingsplan trainingsplan, Exercise exercise) {
-        this.trainingsplan = trainingsplan;
-        this.exercise = exercise;
-    }
 }

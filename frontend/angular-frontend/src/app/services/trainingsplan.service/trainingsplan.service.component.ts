@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {Exercise} from '../../features/exercises/exercises.component';
+import {Exercise} from '../../core/exercises/exercises.component';
 
 interface TrainingPlan {
   name: string;

@@ -2,17 +2,18 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { WelcomepageComponent } from "./core/welcomepage/welcomepage.component";
-import { LoginComponent } from "./features/login/login.component";
-import { RegisterComponent } from "./features/register/register.component";
-import { AdminPanelComponent } from "./features/admin-panel/admin-panel.component";
-import { DashboardComponent } from "./features/dashboard/dashboard.component";
+import { LoginComponent } from "./core/login/login.component";
+import { RegisterComponent } from "./core/register/register.component";
+import { AdminPanelComponent } from "./core/admin-panel/admin-panel.component";
+import { DashboardComponent } from "./core/dashboard/dashboard.component";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import {RouterModule} from '@angular/router';
 import {routes} from './app.routes';
-import {CreateTrainingComponent} from './features/create-training/create-training.component';
+import {CreateTrainingComponent} from './core/create-training/create-training.component';
 import {MenuButtonComponent} from './shared/menu-button/menu-button.component';
-import {ExercisesComponent} from './features/exercises/exercises.component';
+import {ExercisesComponent} from './core/exercises/exercises.component';
+import {NgSelectModule} from '@ng-select/ng-select';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import {ExercisesComponent} from './features/exercises/exercises.component';
     AppComponent,
     CreateTrainingComponent,
     MenuButtonComponent,
-    ExercisesComponent
+    ExercisesComponent,
+    NgSelectModule,
   ],
   providers: [],
   bootstrap: [],
