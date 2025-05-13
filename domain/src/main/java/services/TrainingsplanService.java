@@ -19,7 +19,7 @@ public class TrainingsplanService {
 
     private final ExerciseRepository exerciseRepository;
     private final TrainingsplanRepository trainingsplanRepository;
-private final TrainingsplanStrategyFactory strategyFactory;
+    private final TrainingsplanStrategyFactory strategyFactory;
     @Autowired
     public TrainingsplanService(
             ExerciseRepository exerciseRepository,
@@ -76,6 +76,8 @@ private final TrainingsplanStrategyFactory strategyFactory;
     }
 
     public void deleteTrainingsplan(Long id) {
+        Optional<Trainingsplan> trainingsplanOpt = trainingsplanRepository.findById(id);
+        trainingsplanOpt.ifPresent(plan -> plan.getTrainingsplanExercises().clear());
         trainingsplanRepository.deleteById(id);
     }
 

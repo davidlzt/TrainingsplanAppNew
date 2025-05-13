@@ -2,7 +2,7 @@
   padding: 20px;
   background-color: #121212;
   min-height: 100vh;
-  color:white;
+  color: white;
 }
 
 .panel-header {
@@ -18,13 +18,7 @@
   margin-bottom: 20px;
 }
 
-.add-exercise-container {
-  background-color: #1f1f1f;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
+.add-exercise-container,
 .exercise-list-container {
   background-color: #1f1f1f;
   padding: 20px;
@@ -60,7 +54,7 @@
   color: white;
 }
 
-button[type="submit"],
+button[type='submit'],
 button.add-exercise-btn {
   width: 100%;
   padding: 10px;
@@ -70,7 +64,7 @@ button.add-exercise-btn {
   border-radius: 5px;
 }
 
-button[type="submit"]:hover,
+button[type='submit']:hover,
 button.add-exercise-btn:hover {
   background-color: #555;
 }
@@ -92,62 +86,6 @@ button.add-exercise-btn:hover {
   background-color: #f44336;
   color: white;
   padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.remove-exercise-btn:hover {
-  background-color: #d32f2f;
-}
-
-.show-exercises-btn {
-  background-color: #444;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.show-exercises-btn:hover {
-  background-color: #555;
-}
-
-.add-exercise-btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.add-exercise-btn:hover {
-  background-color: #0056b3;
-}
-
-.exercise-item {
-  background-color: #333;
-  color: #ccc;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.exercise-text {
-  flex-grow: 1;
-}
-
-.remove-exercise-btn {
-  margin-left: 20px;
-  background-color: #f44336;
-  color: white;
-  padding: 8px 15px;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -228,19 +166,6 @@ button.add-exercise-btn:hover {
 
 .dropdown select:focus {
   outline-color: #00bcd4;
-}
-
-button.add-exercise-btn {
-  width: 100%;
-  padding: 10px;
-  background-color: #444;
-  color: white;
-  border: none;
-  border-radius: 5px;
-}
-
-button.add-exercise-btn:hover {
-  background-color: #555;
 }
 
 .input-container {

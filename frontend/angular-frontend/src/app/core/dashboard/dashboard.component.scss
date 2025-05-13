@@ -1,15 +1,41 @@
+$primary-color: #00bcd4;
+$background-color-dark: #1f1f1f;
+$button-color: #444;
+$highlight-color: #00bcd4;
+$box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+@mixin button-style {
+  background-color: $button-color;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  &:hover {
+    background-color: darken($button-color, 10%);
+  }
+}
+
+@mixin box-style {
+  background-color: $background-color-dark;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: $box-shadow;
+}
+
+body {
+  background-color: #121212;
+  font-family: Arial, sans-serif;
+}
+
 .dashboard-container {
   padding: 20px;
-  background-color: #121212;
   min-height: 100vh;
-}
-.training-displayedname {
-  color: white;
 }
 
 .dashboard-header {
   text-align: center;
-  color: #00bcd4;
+  color: $primary-color;
   margin-bottom: 20px;
   display: inline-block;
   width: calc(100% - 120px);
@@ -23,10 +49,7 @@
 }
 
 .calendar-box {
-  background-color: #1f1f1f;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  @include box-style;
 }
 
 .calendar-grid {
@@ -48,7 +71,6 @@
   font-weight: bold;
   background-color: #444;
   color: white;
-  text-align: center;
 }
 
 .calendar-date {
@@ -60,24 +82,13 @@
   bottom: 5px;
   left: 5px;
   font-size: 12px;
-  color: #00bcd4;
+  color: $primary-color;
 }
 
-.calendar-controls .btn {
-  background-color: #444;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.calendar-controls .btn:hover {
-  background-color: #555;
-}
-
-.current-date {
-  color: white;
+.highlight-today {
+  background-color: $highlight-color !important;
+  color: black !important;
+  font-weight: bold;
 }
 
 .boxes-container {
@@ -87,135 +98,36 @@
 }
 
 .box {
-  background-color: #1f1f1f;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  @include box-style;
   width: 48%;
 }
 
 .plan-box {
   background-color: #2c2c2c;
-  color: white;
-}
-
-.stats-box {
-  background-color: #2c2c2c;
+  width: 100%;
 }
 
 h3 {
-  color: #00bcd4;
+  color: $primary-color;
   margin-bottom: 10px;
-}
-
-input,
-textarea {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #444;
-  border-radius: 5px;
-  background-color: #333;
-  color: white;
 }
 
 button[type="submit"] {
   width: 100%;
-  padding: 10px;
-  background-color: #444;
-  color: white;
-  border: none;
-  border-radius: 5px;
+  @include button-style;
 }
 
 button[type="submit"]:hover {
-  background-color: #555;
+  background-color: darken($button-color, 10%);
 }
 
-.stats-box p {
-  color: white;
-  margin-bottom: 10px;
-}
-
-.stats-box span {
-  font-weight: bold;
-}
-
-.highlight-today {
-  background-color: #00bcd4 !important;
-  color: black !important;
-  font-weight: bold;
-}
-
-.plans-list-box {
-  background-color: #2c2c2c;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  margin-top: 30px;
-  color: white;
-}
-
-.plans-list-box h3 {
-  color: #00bcd4;
-  margin-bottom: 10px;
-}
-
-.plans-list-box ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.plans-list-box li {
-  background-color: #333;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-.plans-list-box li h4 {
-  color: #00bcd4;
-  margin-bottom: 5px;
-}
-
-.plans-list-box li p {
-  color: white;
-}
-
-.exercise-list li {
-  color: #00bcd4;
-  font-style: italic;
-}
-
-.exercise-list li p {
-  font-size: 0.9rem;
-  color: #ccc;
-}
-
-.training-days {
-  font-weight: bold;
-  color: #00bcd4;
-}
-
-.trainingsplan-name {
-  font-size: 1.1rem;
-  color: #00bcd4;
-  font-weight: bold;
-}
-
-.plan-details {
-  font-size: 0.9rem;
-  color: #ccc;
-}
 .delete-button {
   background-color: #e74c3c;
   color: white;
-  border: none;
   padding: 6px 12px;
   border-radius: 4px;
   cursor: pointer;
   margin-top: 8px;
-
   &:hover {
     background-color: #c0392b;
   }
@@ -225,33 +137,18 @@ button[type="submit"]:hover {
   gap: 20px;
   align-items: flex-start;
   margin-top: 20px;
-
-  .box {
-    flex: 1;
-  }
+  color: white;
 
   .flappy-box {
-    width: 320px;
-    max-width: 100%;
     background: #f5f5f5;
     border: 1px solid #ccc;
     padding: 15px;
     border-radius: 8px;
     text-align: center;
-
     .game-canvas {
       border: 2px solid #000;
       display: block;
       margin: 10px auto;
     }
-
-    .start-button {
-      margin-bottom: 10px;
-    }
-
-    .score-display {
-      font-weight: bold;
-    }
   }
 }
-

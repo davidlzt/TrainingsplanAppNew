@@ -29,10 +29,11 @@ public class UserService {
         return user != null && user.getPassword().equals(password);
     }
 
-
     @Transactional
     public void changeUserRole(Long userId, Role newRole) {
-        userRepository.updateUserRole(userId, newRole);
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        user.setRole(newRole);
+        userRepository.save(user);
     }
 
     @Transactional
@@ -46,11 +47,14 @@ public class UserService {
         }
     }
     public List<User> getAllUsers() {
-        List<User> allUser = userRepository.findAll();
-        return allUser;
+        return userRepository.findAll();
     }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    public boolean deleteUser(Long id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

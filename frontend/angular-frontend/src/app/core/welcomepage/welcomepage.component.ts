@@ -5,8 +5,7 @@ import {HttpClient, HttpClientModule} from '@angular/common/http';
 @Component({
   selector: 'app-welcomepage',
   standalone: true,
-  imports: [HttpClientModule,
-    RouterLink, RouterOutlet, RouterLinkActive],
+  imports: [HttpClientModule,],
   templateUrl: './welcomepage.component.html',
   styleUrl: './welcomepage.component.scss'
 })

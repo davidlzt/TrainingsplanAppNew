@@ -16,13 +16,13 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS})
 public class AuthController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     private final UserService userService;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserRepository userRepository,UserService userService) {
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/register/nextid")
@@ -33,8 +33,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public void register(@RequestBody User user) {
+    public ResponseEntity<?> register(@RequestBody User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("success", false, "message", "Username already exists"));
+        }
         userService.registerUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success", true));
     }
 
     @PostMapping("/login")
@@ -49,7 +54,6 @@ public class AuthController {
             }
         } catch (Exception e) {
             System.err.println("Error occurred during login: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("success", false, "message", "An error occurred during login"));
         }

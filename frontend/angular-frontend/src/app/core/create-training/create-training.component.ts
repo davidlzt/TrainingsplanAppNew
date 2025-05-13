@@ -7,7 +7,6 @@ import {KeyValuePipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import { MenuButtonComponent } from '../../shared/menu-button/menu-button.component';
 import {TrainingsplanService} from '../../services/trainingsplan.service/trainingsplan.service.component';
 import {Muscle, MuscleService} from '../../services/muscle.service/muscle.service.component';
-import {NgSelectComponent} from '@ng-select/ng-select';
 
 interface TrainingPlan {
   name: string;
@@ -27,8 +26,6 @@ interface TrainingPlan {
     NgIf,
     NgClass,
     MenuButtonComponent,
-    NgSelectComponent,
-    KeyValuePipe,
   ],
   standalone: true
 })

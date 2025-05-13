@@ -2,6 +2,8 @@ package restcontroller;
 
 import entitys.Muscle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import services.MuscleService;
 
@@ -20,7 +22,13 @@ public class MuscleController {
     }
 
     @GetMapping
-    public List<Muscle> getAllMuscles() {
-        return muscleService.getAllMuscles();
+    public ResponseEntity<List<Muscle>> getAllMuscles() {
+        try {
+            List<Muscle> muscles = muscleService.getAllMuscles();
+            return ResponseEntity.ok(muscles);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
     }
 }

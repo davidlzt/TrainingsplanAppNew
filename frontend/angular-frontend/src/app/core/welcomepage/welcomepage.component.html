@@ -1,13 +1,19 @@
 <main>
   <div class="welcome-container">
     <div class="welcome-box">
-      <h1 class="welcome-header">Welcome to the Training Plan App</h1>
+      <h1 class="welcome-header">
+        Welcome to the Training Plan App
+      </h1>
       <p class="welcome-text">
         Your personal training plan is just a click away! Manage your workouts and exercises easily.
       </p>
       <div class="action-buttons">
-        <button class="btn primary" (click)="navigateToRegister()">Register</button>
-        <button class="btn secondary" (click)="navigateToLogin()">Login</button>
+        <button class="btn primary" (click)="navigateToRegister()" [@buttonAnimation]>
+          Register
+        </button>
+        <button class="btn secondary" (click)="navigateToLogin()" [@buttonAnimation]>
+          Login
+        </button>
       </div>
     </div>
   </div>

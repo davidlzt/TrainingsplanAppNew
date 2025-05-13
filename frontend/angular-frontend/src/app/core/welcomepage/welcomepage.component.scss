@@ -36,6 +36,7 @@ a {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 500px;
+  animation: fadeIn 1s ease-in-out;
 }
 
 /* Überschrift und Text */
@@ -44,12 +45,14 @@ a {
   color: #00bcd4;
   margin-bottom: 20px;
   font-weight: bold;
+  animation: fadeInHeader 1s ease-in-out;
 }
 
 .welcome-text {
   color: #bbb;
   font-size: 18px;
   margin-bottom: 30px;
+  animation: fadeInText 1s ease-in-out;
 }
 
 /* Action Buttons */
@@ -57,6 +60,7 @@ a {
   display: flex;
   justify-content: center;
   gap: 20px;
+  animation: fadeInButtons 1s ease-in-out;
 }
 
 /* Button-Stile */
@@ -71,6 +75,7 @@ a {
   text-transform: uppercase;
   letter-spacing: 1px;
   box-shadow: 0 4px 10px rgba(0, 188, 212, 0.3);
+  animation: buttonHoverEffect 0.5s ease-out;
 }
 
 /* Register Button */
@@ -104,5 +109,55 @@ a {
   .btn {
     width: 100%;
     margin-bottom: 10px;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInHeader {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInText {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInButtons {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes buttonHoverEffect {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
   }
 }

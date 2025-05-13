@@ -1,4 +1,4 @@
-package Application;
+package application;
 
 import entitys.Device;
 import entitys.Exercise;
@@ -26,7 +26,7 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         if (muscleRepository.count() == 0) {
             List<Muscle> muscles = List.of(
                     new Muscle("Schulter", "Für Schulterübungen"),
@@ -40,7 +40,6 @@ public class DataInitializer implements CommandLineRunner {
                     new Muscle("Bauch", "Für Bauchmuskulatur")
             );
             muscleRepository.saveAll(muscles);
-            System.out.println("Muskel-Einträge wurden hinzugefügt.");
         }
 
         if (exerciseRepository.count() == 0) {
@@ -49,13 +48,8 @@ public class DataInitializer implements CommandLineRunner {
 
             List<Exercise> exercises = createDefaultExercises(devices);
             exerciseRepository.saveAll(exercises);
-
-            System.out.println("Geräte und Übungen wurden hinzugefügt.");
-        } else {
-            System.out.println("Geräte und Übungen sind bereits vorhanden.");
         }
     }
-
 
     private List<Device> createDefaultDevices() {
         Device langhantel = new Device("Langhantel", "Verwendung für verschiedene Übungen wie Kreuzheben und Bankdrücken.");
@@ -118,18 +112,5 @@ public class DataInitializer implements CommandLineRunner {
                 .filter(m -> m.getName().equalsIgnoreCase(name))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Muskel nicht gefunden: " + name));
-    }
-    private List<Muscle> createDefaultMuscles() {
-        return Arrays.asList(
-                new Muscle("Schultermuskel", "Muskel im Schulterbereich"),
-                new Muscle("Nackenmuskel", "Muskel im Nackenbereich"),
-                new Muscle("Oberer Rücken", "Latissimus und andere obere Rückenmuskeln"),
-                new Muscle("Unterer Rücken", "Muskulatur im unteren Rücken"),
-                new Muscle("Bizeps", "Vorderer Oberarmmuskel"),
-                new Muscle("Trizeps", "Hinterer Oberarmmuskel"),
-                new Muscle("Brustmuskel", "Großer Brustmuskel (Pectoralis)"),
-                new Muscle("Beinmuskulatur", "Beinmuskeln wie Quadrizeps, Hamstrings, Gluteus"),
-                new Muscle("Bauchmuskel", "Bauchmuskeln")
-        );
     }
 }

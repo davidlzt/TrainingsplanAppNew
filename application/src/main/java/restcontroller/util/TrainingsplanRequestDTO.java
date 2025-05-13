@@ -13,4 +13,14 @@ public class TrainingsplanRequestDTO {
     private List<Long> trainingDays;
     private List<Long> exerciseIds;
 
+    public TrainingsplanRequestDTO(String name, String description, String goal, List<Long> trainingDays, List<Long> exerciseIds) {
+        this.name = name;
+        this.description = description;
+        this.goal = goal;
+        this.trainingDays = trainingDays;
+        this.exerciseIds = exerciseIds;
+    }
+
+    public TrainingsplanRequestDTO() {}
 }
+

@@ -14,7 +14,7 @@ import {CreateTrainingComponent} from './core/create-training/create-training.co
 import {MenuButtonComponent} from './shared/menu-button/menu-button.component';
 import {ExercisesComponent} from './core/exercises/exercises.component';
 import {NgSelectModule} from '@ng-select/ng-select';
-
+import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
 @NgModule({
   declarations: [
   ],
@@ -33,6 +33,9 @@ import {NgSelectModule} from '@ng-select/ng-select';
     MenuButtonComponent,
     ExercisesComponent,
     NgSelectModule,
+    BrowserAnimationsModule,
+    WelcomepageComponent,
+    NoopAnimationsModule
   ],
   providers: [],
   bootstrap: [],

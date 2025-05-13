@@ -7,11 +7,9 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Setter
 @Getter
+@Setter
 public class MusclesAndDevicesRequest {
-
     private List<Muscle> muscles;
     private List<Device> devices;
-
 }

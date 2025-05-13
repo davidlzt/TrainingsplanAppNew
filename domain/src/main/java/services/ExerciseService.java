@@ -7,6 +7,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import repositories.ExerciseRepository;
 import entitys.Muscle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,10 +16,15 @@ import java.util.Optional;
 @Service
 public class ExerciseService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ExerciseService.class);
+
     @Autowired
     private ExerciseRepository exerciseRepository;
 
     public Exercise addExercise(Exercise exercise) {
+        if (exercise.getName() == null || exercise.getName().isEmpty()) {
+            throw new IllegalArgumentException("Exercise name cannot be null or empty");
+        }
         return exerciseRepository.save(exercise);
     }
 
@@ -25,8 +32,9 @@ public class ExerciseService {
         return exerciseRepository.findAll();
     }
 
-    public Optional<Exercise> getExerciseById(Long id) {
-        return exerciseRepository.findById(id);
+    public Exercise getExerciseById(Long id) {
+        return exerciseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Exercise not found"));
     }
 
     public void deleteExercise(Long id) {
@@ -44,15 +52,16 @@ public class ExerciseService {
             }
 
             exerciseRepository.save(exercise);
+            logger.info("Muscles and devices added to exercise with ID {}", exerciseId);
+        } else {
+            logger.error("Exercise with ID {} not found", exerciseId);
+            throw new RuntimeException("Exercise not found");
         }
     }
 
     public Long getMaxExerciseId() {
-        List<Exercise> exercises = exerciseRepository.findAll(Sort.by(Sort.Order.desc("id")));
-        if (!exercises.isEmpty()) {
-            return exercises.get(0).getId();
-        } else {
-            return 0L;
-        }
+        return exerciseRepository.findTopByOrderByIdDesc()
+                .map(Exercise::getId)
+                .orElse(0L);
     }
 }

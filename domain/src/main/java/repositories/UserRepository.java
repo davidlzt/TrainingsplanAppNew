@@ -28,4 +28,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
         user.setRole(newRole);
         save(user);
     }
+    boolean existsByUsername(String username);
 }

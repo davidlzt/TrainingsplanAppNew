@@ -65,7 +65,7 @@ class ExerciseServiceTest {
     void testGetExerciseById() {
         when(exerciseRepository.findById(1L)).thenReturn(Optional.of(exercise));
 
-        Optional<Exercise> foundExercise = exerciseService.getExerciseById(1L);
+        Optional<Exercise> foundExercise = Optional.ofNullable(exerciseService.getExerciseById(1L));
 
         assertTrue(foundExercise.isPresent());
         assertEquals(exercise.getName(), foundExercise.get().getName());

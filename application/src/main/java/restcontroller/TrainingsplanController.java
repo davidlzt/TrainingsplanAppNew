@@ -3,6 +3,7 @@ package restcontroller;
 import entitys.Trainingsplan;
 import entitys.TrainingsplanExercise;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import repositories.ExerciseRepository;
@@ -34,8 +35,7 @@ public class TrainingsplanController {
     @GetMapping("/{id}")
     public ResponseEntity<Trainingsplan> getTrainingsplan(@PathVariable Long id) {
         Optional<Trainingsplan> trainingsplan = trainingsplanService.getTrainingsplanWithExercises(id);
-
-        return trainingsplan.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return trainingsplan.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 
     @PostMapping

@@ -2,7 +2,7 @@
   <h2>Übungen</h2>
   <app-menu-button></app-menu-button>
 
-  <div *ngIf="exercises.length > 0; else noExercises">
+  <ng-container *ngIf="exercises.length > 0; else noExercises">
     <div class="exercise-grid">
       <div
         *ngFor="let exercise of exercises"
@@ -11,11 +11,13 @@
       >
         <h3 class="exercise-name">{{ exercise.name }}</h3>
         <p class="exercise-description">{{ exercise.description }}</p>
-        <p class="exercise-instructions">{{ exercise.instructions || 'Keine Anweisungen verfügbar' }}</p>
+        <p class="exercise-instructions">
+          {{ exercise.instructions || 'Keine Anweisungen verfügbar' }}
+        </p>
         <button class="btn" (click)="selectExercise(exercise)">Übung auswählen</button>
       </div>
     </div>
-  </div>
+  </ng-container>
 
   <ng-template #noExercises>
     <p>Keine Übungen verfügbar.</p>

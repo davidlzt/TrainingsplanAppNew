@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from "../../services/auth.service/auth.service.component";
 import {Router, RouterLink, RouterModule} from '@angular/router';
-import { HttpClient } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
 import { NgIf } from "@angular/common";
 
@@ -22,7 +21,7 @@ export class LoginComponent {
   password: string = '';
   errorMessage: string = '';
 
-  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   login(): void {
     const loginData = {

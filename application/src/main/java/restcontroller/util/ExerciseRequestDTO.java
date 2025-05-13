@@ -1,7 +1,6 @@
 package restcontroller.util;
 
 import entitys.Device;
-import entitys.Muscle;
 import lombok.Getter;
 import lombok.Setter;
 

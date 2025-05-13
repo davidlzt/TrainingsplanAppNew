@@ -1,10 +1,10 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import {Router} from '@angular/router';
 import {TrainingsplanService} from '../../services/trainingsplan.service/trainingsplan.service.component';
 import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {MenuButtonComponent} from '../../shared/menu-button/menu-button.component';
 import {FormsModule} from '@angular/forms';
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -36,7 +36,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private trainingsplanService: TrainingsplanService,
-    private http: HttpClient,
   ) {}
 
   ngOnInit() {
@@ -106,17 +105,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.daysInMonth = days;
   }
 
-
   dayHasTraining(day: any): boolean {
-    if (this.currentYear === undefined) return false;
+    if (!day.date || this.currentYear === undefined) return false;
 
     const currentDayOfWeek = new Date(this.currentYear, new Date().getMonth(), day.date).getDay();
-
     const rotatedDayOfWeek = (currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1);
 
     return this.trainingPlans.some(plan => plan.trainingDays.includes(rotatedDayOfWeek));
   }
-
 
   loadTrainingDetails(trainingsplanId: number) {
     this.trainingsplanService.getTrainingFrequency(trainingsplanId).subscribe((frequency: number) => {
@@ -129,32 +125,18 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   isTrainingDay(dayDate: number | undefined, trainingDays: number[]): boolean {
-    if (typeof dayDate !== 'number' || isNaN(dayDate)) {
-      dayDate = 0;
-    }
+    if (typeof dayDate !== 'number' || isNaN(dayDate)) return false;
+    if (this.currentYear === undefined) return false;
 
-    let dayOfWeek: number;
-    if (typeof this.currentYear === "number") {
-      const day = new Date(this.currentYear, new Date().getMonth(), dayDate);
-      dayOfWeek = day.getDay();
-    } else {
-      dayOfWeek = 0;
-    }
-
+    const day = new Date(this.currentYear, new Date().getMonth(), dayDate);
+    const dayOfWeek = day.getDay();
     const rotatedDayOfWeek = (dayOfWeek === 0 ? 6 : dayOfWeek - 1);
 
     return trainingDays.includes(rotatedDayOfWeek);
   }
 
-
   getRotatedWeekDays(): string[] {
-    const today = new Date();
-    const todayIndex = today.getDay();
-    const orderedDays = [...this.daysOfWeek];
-    const dayIndexInCustomOrder = (todayIndex === 0 ? 6 : todayIndex - 1);
-    const rotated = [...orderedDays.slice(dayIndexInCustomOrder), ...orderedDays.slice(0, dayIndexInCustomOrder)];
-
-    return rotated;
+    return this.daysOfWeek;
   }
 
   deleteTrainingPlan(planId: number): void {
@@ -171,7 +153,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     );
   }
   score: number = 0;
-  gameInterval: any;
   gravity: number = 0.1;
   birdY: number = 200;
   velocity: number = 0;

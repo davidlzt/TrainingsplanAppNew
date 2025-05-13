@@ -1,6 +1,7 @@
 package restcontroller;
 
 import entitys.Device;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,11 @@ public class DeviceController {
     }
 
     @GetMapping
-    public List<Device> getAllDevices() {
-        return deviceService.getAllDevices();
+    public ResponseEntity<List<Device>> getAllDevices() {
+        List<Device> devices = deviceService.getAllDevices();
+        if (devices.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(devices);
     }
 }
