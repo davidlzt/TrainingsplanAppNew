@@ -65,15 +65,15 @@ class TrainingsplanServiceTest {
     @Test
     void testCreateTrainingsplanWithExercises() {
         Trainingsplan newPlan = new Trainingsplan();
-        newPlan.setName("New Plan");
+        newPlan.setName("Full Body Plan");
         when(exerciseRepository.findById(1L)).thenReturn(Optional.of(exercise));
-        when(trainingsplanRepository.save(any(Trainingsplan.class))).thenReturn(trainingsplan);
+        when(trainingsplanRepository.save(any(Trainingsplan.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<Long> exerciseIds = List.of(1L);
         Trainingsplan createdPlan = trainingsplanService.createTrainingsplanWithExercises(newPlan, exerciseIds);
 
         assertNotNull(createdPlan);
-        assertEquals("New Plan", createdPlan.getName());
+        assertEquals("Full Body Plan", createdPlan.getName());
         assertEquals(1, createdPlan.getTrainingsplanExercises().size());
         verify(exerciseRepository, times(1)).findById(1L);
         verify(trainingsplanRepository, times(1)).save(any(Trainingsplan.class));

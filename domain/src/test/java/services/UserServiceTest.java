@@ -8,10 +8,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import repositories.UserRepository;
-import valueobjects.Role;
+import valueobjects.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -55,12 +57,36 @@ class UserServiceTest {
     }
 
     @Test
-    void testChangeUserRole() {
-        doNothing().when(userRepository).updateUserRole(1L, Role.ADMIN);
+    void testChangeUserRoleWithSave() {
+        User mockUser = new User();
+        mockUser.setId(1L);
+        mockUser.setRole(Role.USER);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(userRepository.save(any(User.class))).thenReturn(mockUser);
+        userService.changeUserRole(1L, Role.ADMIN);
+        verify(userRepository, times(1)).save(any(User.class));
+        assertEquals(Role.ADMIN, mockUser.getRole());
+    }
+
+    @Test
+    void testChangeUserRoleWithUpdateUserRole() {
+        User mockUser = new User();
+        mockUser.setId(1L);
+        mockUser.setRole(Role.USER);
+        mockUser.setUsername("testuser");
+        mockUser.setPassword("password");
+        mockUser.setEmail(new Email("test@web.de"));
+        mockUser.setWeight(new Weight(100));
+        mockUser.setAge(22);
+        mockUser.setHeight(new Height(189));
+        mockUser.setGeschlecht(Gender.MALE);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
 
         userService.changeUserRole(1L, Role.ADMIN);
 
-        verify(userRepository, times(1)).updateUserRole(1L, Role.ADMIN);
+        verify(userRepository, times(1)).save(mockUser);
+
+        assertEquals(Role.ADMIN, mockUser.getRole());
     }
 
     @Test
@@ -77,23 +103,25 @@ class UserServiceTest {
 
     @Test
     void testGetAllUsers() {
-        when(userRepository.findAll()).thenReturn(Arrays.asList(user));
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
 
         List<User> users = userService.getAllUsers();
 
         assertNotNull(users);
         assertFalse(users.isEmpty());
         assertEquals(1, users.size());
-        assertEquals(user.getUsername(), users.get(0).getUsername());
+        assertEquals(user.getUsername(), users.getFirst().getUsername());
         verify(userRepository, times(1)).findAll();
     }
 
     @Test
     void testDeleteUser() {
+        when(userRepository.existsById(1L)).thenReturn(true);
         doNothing().when(userRepository).deleteById(1L);
 
-        userService.deleteUser(1L);
-
+        boolean result = userService.deleteUser(1L);
+        assertTrue(result);
         verify(userRepository, times(1)).deleteById(1L);
+
     }
 }

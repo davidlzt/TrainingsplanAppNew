@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Sort;
 import repositories.ExerciseRepository;
 
 import java.util.Arrays;
@@ -106,21 +105,23 @@ class ExerciseServiceTest {
     void testGetMaxExerciseId() {
         Exercise exercise2 = new Exercise();
         exercise2.setId(2L);
-        when(exerciseRepository.findAll(any(Sort.class))).thenReturn(Arrays.asList(exercise2, exercise));
+
+        when(exerciseRepository.findTopByOrderByIdDesc()).thenReturn(Optional.of(exercise2));
 
         Long maxId = exerciseService.getMaxExerciseId();
 
         assertEquals(2L, maxId);
-        verify(exerciseRepository, times(1)).findAll(any(Sort.class));
+        verify(exerciseRepository, times(1)).findTopByOrderByIdDesc();
     }
 
     @Test
     void testGetMaxExerciseIdWhenNoExercises() {
-        when(exerciseRepository.findAll(any(Sort.class))).thenReturn(Arrays.asList());
+        when(exerciseRepository.findTopByOrderByIdDesc()).thenReturn(Optional.empty());
 
         Long maxId = exerciseService.getMaxExerciseId();
 
         assertEquals(0L, maxId);
-        verify(exerciseRepository, times(1)).findAll(any(Sort.class));
+        verify(exerciseRepository, times(1)).findTopByOrderByIdDesc();
     }
+
 }
